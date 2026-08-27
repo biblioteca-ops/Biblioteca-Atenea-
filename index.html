@@ -7,10 +7,6 @@
     <!-- Firebase SDKs (v9 compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    <!-- Librerías para Exportar a Excel y PDF -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     
     <style>
         :root {
@@ -174,30 +170,6 @@
         }
 
         .btn:hover { background-color: var(--dorado-bronce); color: #1A100C; }
-
-        .btn-export {
-            background-color: #2E5A27;
-            color: #FFF;
-            border: 1px solid #1e3d1a;
-            padding: 9px 16px;
-            font-size: 0.88rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .btn-export:hover { background-color: #1e3d1a; }
-
-        .btn-pdf {
-            background-color: #8B0000;
-            color: #FFF;
-            border: 1px solid #5a0000;
-            padding: 9px 16px;
-            font-size: 0.88rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .btn-pdf:hover { background-color: #5a0000; }
 
         /* BOTONES DE ACCIÓN EN TABLAS */
         .btn-edit {
@@ -482,10 +454,6 @@
                     <option value="Sede Conrado (Atenea)">Sede Conrado (Atenea)</option>
                     <option value="Sede Parque (Ana Frank)">Sede Parque (Ana Frank)</option>
                 </select>
-                <div>
-                    <button class="btn btn-export" onclick="exportBooksToExcel()">📊 Descargar Excel</button>
-                    <button class="btn btn-pdf" onclick="exportBooksToPDF()">📄 Descargar PDF</button>
-                </div>
             </div>
 
             <table id="booksTable">
@@ -1148,64 +1116,6 @@
         const y = parseInt(document.getElementById('calYearSelect').value);
         currentCalDate = new Date(y, m, 1);
         renderDesktopCalendar();
-    }
-
-    // EXPORTAR A EXCEL Y PDF
-    function exportBooksToExcel() {
-        if (books.length === 0) {
-            alert("No hay libros registrados para exportar.");
-            return;
-        }
-        const data = books.map(b => ({
-            "Sede": b.sede || "Sede Conrado (Atenea)",
-            "Título": b.title || "",
-            "Autor": b.author || "",
-            "ISBN": b.isbn || "",
-            "Editorial": b.editorial || "",
-            "Año": b.year || "",
-            "Ejemplares Disponibles": b.copies !== undefined ? b.copies : 0,
-            "Ejemplares No Disponibles": b.borrowed !== undefined ? b.borrowed : 0
-        }));
-
-        const worksheet = XLSX.utils.json_to_sheet(data);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Inventario Libros");
-        XLSX.writeFile(workbook, "Inventario_Biblioteca_Atenea.xlsx");
-    }
-
-    function exportBooksToPDF() {
-        if (books.length === 0) {
-            alert("No hay libros registrados para exportar.");
-            return;
-        }
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-
-        doc.setFontSize(16);
-        doc.text("Biblioteca Atenea - Inventario de Libros", 14, 15);
-        doc.setFontSize(10);
-        doc.text("Institución Educativa Mariscal Robledo", 14, 22);
-
-        const tableColumn = ["Sede", "Título", "Autor", "ISBN", "Año", "Disp.", "Prest."];
-        const tableRows = books.map(b => [
-            b.sede || "Sede Conrado (Atenea)",
-            b.title || "",
-            b.author || "",
-            b.isbn || "",
-            b.year || "",
-            b.copies !== undefined ? b.copies : 0,
-            b.borrowed !== undefined ? b.borrowed : 0
-        ]);
-
-        doc.autoTable({
-            head: [tableColumn],
-            body: tableRows,
-            startY: 28,
-            theme: 'grid',
-            headStyles: { fillColor: [61, 35, 20], textColor: [198, 160, 82] }
-        });
-
-        doc.save("Inventario_Biblioteca_Atenea.pdf");
     }
 
     // RENOVACIÓN DE PRÉSTAMO (+10 DÍAS)
