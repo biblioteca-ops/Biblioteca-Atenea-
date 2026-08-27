@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biblioteca Atenea - I.E. Mariscal Robledo</title>
+    <!-- Firebase SDKs (v9 compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <!-- Librerías para Exportar a Excel y PDF -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
@@ -47,8 +49,8 @@
         }
 
         .atenea-avatar {
-            width: 90px;
-            height: 90px;
+            width: 85px;
+            height: 85px;
             border-radius: 50%;
             border: 3px solid var(--dorado-bronce);
             overflow: hidden;
@@ -65,7 +67,7 @@
 
         .header-titles h1 {
             margin: 0;
-            font-size: 2.3rem;
+            font-size: 2.2rem;
             letter-spacing: 2px;
             text-transform: uppercase;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
@@ -177,55 +179,86 @@
             background-color: #2E5A27;
             color: #FFF;
             border: 1px solid #1e3d1a;
-            padding: 8px 16px;
+            padding: 9px 16px;
             font-size: 0.88rem;
-            margin-right: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
         }
-
-        .btn-export:hover { background-color: #1e3d1a; color: #FFF; }
+        .btn-export:hover { background-color: #1e3d1a; }
 
         .btn-pdf {
             background-color: #8B0000;
             color: #FFF;
             border: 1px solid #5a0000;
-            padding: 8px 16px;
+            padding: 9px 16px;
             font-size: 0.88rem;
-        }
-
-        .btn-pdf:hover { background-color: #5a0000; color: #FFF; }
-
-        .btn-edit, .btn-renew {
-            padding: 6px 12px;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.82rem;
-            transition: 0.2s;
-            font-family: inherit;
-            margin-right: 5px;
         }
+        .btn-pdf:hover { background-color: #5a0000; }
 
+        /* BOTONES DE ACCIÓN EN TABLAS */
         .btn-edit {
             background-color: #3D2314;
             color: var(--dorado-bronce);
             border: 1px solid var(--dorado-bronce);
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-right: 3px;
         }
-
         .btn-edit:hover { background-color: var(--dorado-bronce); color: #3D2314; }
 
         .btn-renew {
             background-color: var(--dorado-bronce);
             color: #24140B;
             border: 1px solid #24140B;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-right: 3px;
         }
-
         .btn-renew:hover { background-color: #24140B; color: var(--dorado-bronce); }
+
+        .btn-return {
+            background-color: #2E5A27;
+            color: white;
+            border: 1px solid #1e3d1a;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-right: 3px;
+        }
+        .btn-return:hover { background-color: #1e3d1a; }
+
+        .btn-delete {
+            background-color: #8B0000;
+            color: white;
+            border: 1px solid #5a0000;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        .btn-delete:hover { background-color: #5a0000; }
 
         .btn-secondary {
             background-color: #7A6956;
             color: white;
             border: none;
             margin-left: 10px;
+            padding: 10px 18px;
+            border-radius: 4px;
+            cursor: pointer;
         }
 
         table {
@@ -235,9 +268,10 @@
         }
 
         th, td {
-            padding: 12px 14px;
+            padding: 10px 12px;
             border: 1px solid var(--borde-pergamino);
             text-align: left;
+            font-size: 0.9rem;
         }
 
         th { background-color: #3D2314; color: var(--dorado-bronce); font-weight: 600; }
@@ -245,20 +279,19 @@
         .badge-overdue { 
             background: var(--danger-carmesi); 
             color: #FFF; 
-            padding: 5px 10px; 
+            padding: 4px 8px; 
             border-radius: 4px; 
-            font-size: 0.85rem; 
+            font-size: 0.8rem; 
             font-weight: bold; 
             display: inline-block;
-            box-shadow: 0 2px 5px rgba(139, 0, 0, 0.3);
         }
 
         .badge-active { 
             background: var(--success-laurel); 
             color: white; 
-            padding: 5px 10px; 
+            padding: 4px 8px; 
             border-radius: 4px; 
-            font-size: 0.85rem; 
+            font-size: 0.8rem; 
             font-weight: bold; 
             display: inline-block;
         }
@@ -266,7 +299,7 @@
         .badge-available {
             background-color: #E2EFE0;
             color: var(--success-laurel);
-            padding: 5px 10px;
+            padding: 4px 8px;
             border-radius: 4px;
             font-weight: bold;
             border: 1px solid var(--success-laurel);
@@ -276,7 +309,7 @@
         .badge-unavailable {
             background-color: #F8E2E2;
             color: var(--danger-carmesi);
-            padding: 5px 10px;
+            padding: 4px 8px;
             border-radius: 4px;
             font-weight: bold;
             border: 1px solid var(--danger-carmesi);
@@ -290,7 +323,8 @@
             border-radius: 4px;
             font-weight: bold;
             border: 1px solid var(--borde-pergamino);
-            font-size: 0.85rem;
+            font-size: 0.82rem;
+            display: inline-block;
         }
 
         /* MODALES FLOTANTES PARA EDICIÓN */
@@ -414,14 +448,6 @@
             word-break: break-word;
             line-height: 1.1;
         }
-
-        .export-bar {
-            margin-top: 15px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
     </style>
 </head>
 <body>
@@ -445,12 +471,18 @@
 
 <div class="container">
 
+    <!-- SECCIÓN 1: LIBROS INVENTARIO -->
     <div id="libros" class="section active">
         <div class="card">
             <h2>📚 Inventario General de Libros</h2>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between; align-items: center;">
-                <input type="text" id="searchBook" placeholder="🔍 Buscar por título, autor, ISBN o sede..." onkeyup="renderBooks()" style="flex: 1; min-width: 250px;">
-                <div class="export-bar">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <input type="text" id="searchBook" placeholder="🔍 Buscar por título, autor, ISBN..." onkeyup="renderBooks()" style="flex: 2; min-width: 200px;">
+                <select id="filterSedeBook" onchange="renderBooks()" style="flex: 1; min-width: 180px;">
+                    <option value="">🏛️ Todas las Sedes</option>
+                    <option value="Sede Conrado (Atenea)">Sede Conrado (Atenea)</option>
+                    <option value="Sede Parque (Ana Frank)">Sede Parque (Ana Frank)</option>
+                </select>
+                <div>
                     <button class="btn btn-export" onclick="exportBooksToExcel()">📊 Descargar Excel</button>
                     <button class="btn btn-pdf" onclick="exportBooksToPDF()">📄 Descargar PDF</button>
                 </div>
@@ -466,7 +498,7 @@
                         <th>Editorial / Año</th>
                         <th>Disponibles</th>
                         <th>No Disponibles (Prestados)</th>
-                        <th>Acción</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -474,6 +506,7 @@
         </div>
     </div>
 
+    <!-- SECCIÓN 2: REGISTROS -->
     <div id="registros" class="section">
         <div class="card">
             <h2>📜 Registrar Nuevo Préstamo</h2>
@@ -503,8 +536,9 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Título exacto o ISBN del Libro:</label>
-                    <input type="text" id="loanIsbn" placeholder="Escriba el título o ISBN del libro..." required>
+                    <label>Título exacto o ISBN del Libro (Selección del Inventario):</label>
+                    <input type="text" id="loanIsbn" list="booksList" placeholder="Escriba o seleccione el libro..." required>
+                    <datalist id="booksList"></datalist>
                 </div>
                 
                 <div class="form-group">
@@ -527,8 +561,15 @@
         </div>
 
         <div class="card">
-            <h2>Consultar Historial de Préstamos</h2>
-            <input type="text" id="searchPerson" placeholder="🔍 Buscar por usuario o sede..." onkeyup="renderLoans()">
+            <h2>Consultar Historial y Préstamos Activos</h2>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                <input type="text" id="searchPerson" placeholder="🔍 Buscar por usuario o libro..." onkeyup="renderLoans()" style="flex: 2; min-width: 200px;">
+                <select id="filterSedeLoan" onchange="renderLoans()" style="flex: 1; min-width: 180px;">
+                    <option value="">🏛️ Todas las Sedes</option>
+                    <option value="Sede Conrado (Atenea)">Sede Conrado (Atenea)</option>
+                    <option value="Sede Parque (Ana Frank)">Sede Parque (Ana Frank)</option>
+                </select>
+            </div>
             <table id="loansTable">
                 <thead>
                     <tr>
@@ -538,7 +579,7 @@
                         <th>Libro Prestado</th>
                         <th>Fecha Límite</th>
                         <th>Estado</th>
-                        <th>Acción</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -546,19 +587,23 @@
         </div>
     </div>
 
+    <!-- SECCIÓN 3: CALENDARIO -->
     <div id="calendario" class="section">
         <div class="card">
             <h2>📅 Calendario Visual de Escritorio</h2>
-            <p>Navega dinámicamente entre meses y años para consultar las entregas pendientes por sede.</p>
-            
             <div class="desktop-calendar-controls">
                 <div>
                     <button class="btn" style="padding: 6px 14px;" onclick="prevCalMonth()">◄ Mes Anterior</button>
                     <button class="btn" style="padding: 6px 14px;" onclick="nextCalMonth()">Mes Siguiente ►</button>
                 </div>
                 <div>
-                    <select id="calMonthSelect" onchange="updateDesktopCalNav()" style="width: 140px; display:inline-block; margin-right:5px;"></select>
-                    <select id="calYearSelect" onchange="updateDesktopCalNav()" style="width: 100px; display:inline-block;"></select>
+                    <select id="filterSedeCal" onchange="renderDesktopCalendar(); renderCalendar();" style="width: 170px; display:inline-block; margin-right:5px;">
+                        <option value="">🏛️ Todas las Sedes</option>
+                        <option value="Sede Conrado (Atenea)">Sede Conrado (Atenea)</option>
+                        <option value="Sede Parque (Ana Frank)">Sede Parque (Ana Frank)</option>
+                    </select>
+                    <select id="calMonthSelect" onchange="updateDesktopCalNav()" style="width: 130px; display:inline-block; margin-right:5px;"></select>
+                    <select id="calYearSelect" onchange="updateDesktopCalNav()" style="width: 90px; display:inline-block;"></select>
                 </div>
             </div>
 
@@ -575,7 +620,7 @@
                         <th>Usuario</th>
                         <th>Libro Prestado</th>
                         <th>Estado / Días Transcurridos</th>
-                        <th>Acción</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -583,6 +628,7 @@
         </div>
     </div>
 
+    <!-- SECCIÓN 4: AGREGAR LIBROS -->
     <div id="agregar-libros" class="section">
         <div class="card">
             <h2>➕ Agregar Nuevo Libro al Inventario</h2>
@@ -596,23 +642,23 @@
                 </div>
                 <div class="form-group">
                     <label>Título del Libro:</label>
-                    <input type="text" id="title" required>
+                    <input type="text" id="title" placeholder="Ej: Cien años de soledad" required>
                 </div>
                 <div class="form-group">
                     <label>Autor:</label>
-                    <input type="text" id="author" required>
+                    <input type="text" id="author" placeholder="Ej: Gabriel García Márquez" required>
                 </div>
                 <div class="form-group">
                     <label>ISBN:</label>
-                    <input type="text" id="isbn" required>
+                    <input type="text" id="isbn" placeholder="Ej: 978-958-04-0000-0" required>
                 </div>
                 <div class="form-group">
                     <label>Editorial:</label>
-                    <input type="text" id="editorial" required>
+                    <input type="text" id="editorial" placeholder="Ej: Editorial Sudamericana" required>
                 </div>
                 <div class="form-group">
                     <label>Año de Publicación:</label>
-                    <input type="number" id="year" required>
+                    <input type="number" id="year" placeholder="Ej: 1967" required>
                 </div>
                 <div class="form-group">
                     <label>Cantidad de Ejemplares Disponibles Iniciales:</label>
@@ -625,6 +671,7 @@
 
 </div>
 
+<!-- MODAL EDITAR LIBRO -->
 <div id="editBookModal" class="modal">
     <div class="modal-content card">
         <span class="close" onclick="closeModal('editBookModal')">&times;</span>
@@ -659,6 +706,7 @@
     </div>
 </div>
 
+<!-- MODAL EDITAR PRÉSTAMO / FECHA -->
 <div id="editLoanModal" class="modal">
     <div class="modal-content card">
         <span class="close" onclick="closeModal('editLoanModal')">&times;</span>
@@ -710,7 +758,7 @@
     let books = [];
     let loans = [];
 
-    // Estado del Calendario de Escritorio
+    // Estado del Calendario
     let currentCalDate = new Date();
 
     window.onload = function() {
@@ -731,6 +779,7 @@
     db.collection("books").onSnapshot((snapshot) => {
         books = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderBooks();
+        updateBooksDatalist();
     });
 
     db.collection("loans").onSnapshot((snapshot) => {
@@ -739,6 +788,18 @@
         renderCalendar();
         renderDesktopCalendar();
     });
+
+    function updateBooksDatalist() {
+        const datalist = document.getElementById('booksList');
+        if (!datalist) return;
+        datalist.innerHTML = '';
+        books.forEach(b => {
+            const opt = document.createElement('option');
+            opt.value = b.title;
+            opt.label = `[${b.sede || 'Conrado'}] ${b.title} (ISBN: ${b.isbn}) - ${b.copies || 0} dispon.`;
+            datalist.appendChild(opt);
+        });
+    }
 
     function showTab(tabId, element) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -768,7 +829,7 @@
             alert("Libro agregado exitosamente al inventario.");
             document.getElementById('bookForm').reset();
             setPresetDays(10);
-            showTab('libros');
+            showTab('libros', document.querySelectorAll('nav button')[0]);
         } catch (error) {
             alert("Error al guardar libro: " + error.message);
         }
@@ -822,15 +883,17 @@
 
     function renderBooks() {
         const query = document.getElementById('searchBook').value.toLowerCase();
+        const filterSede = document.getElementById('filterSedeBook').value;
         const tbody = document.querySelector('#booksTable tbody');
         tbody.innerHTML = '';
 
-        books.filter(b => 
-            b.title.toLowerCase().includes(query) || 
-            b.author.toLowerCase().includes(query) || 
-            b.isbn.includes(query) ||
-            (b.sede && b.sede.toLowerCase().includes(query))
-        ).forEach(b => {
+        books.filter(b => {
+            const matchesQuery = b.title.toLowerCase().includes(query) || 
+                                 b.author.toLowerCase().includes(query) || 
+                                 b.isbn.includes(query);
+            const matchesSede = !filterSede || (b.sede === filterSede);
+            return matchesQuery && matchesSede;
+        }).forEach(b => {
             const available = b.copies !== undefined ? Number(b.copies) : 0;
             const borrowed = b.borrowed !== undefined ? Number(b.borrowed) : 0;
             const sedeText = b.sede || 'Sede Conrado (Atenea)';
@@ -843,13 +906,30 @@
                 <td>${b.editorial} (${b.year})</td>
                 <td><span class="badge-available">✔ ${available} Disp.</span></td>
                 <td><span class="badge-unavailable">✖ ${borrowed} Prest.</span></td>
-                <td><button class="btn-edit" onclick="openEditBookModal('${b.id}')">✏️ Editar</button></td>
+                <td>
+                    <button class="btn-edit" onclick="openEditBookModal('${b.id}')">✏️ Editar</button>
+                    <button class="btn-delete" onclick="deleteBook('${b.id}')">🗑️ Eliminar</button>
+                </td>
             </tr>`;
         });
     }
 
+    async function deleteBook(bookId) {
+        const book = books.find(b => b.id === bookId);
+        if (!book) return;
+        if (confirm(`¿Estás seguro de que deseas eliminar el libro "${book.title}" del inventario?`)) {
+            try {
+                await db.collection("books").doc(bookId).delete();
+                alert("Libro eliminado del inventario.");
+            } catch (err) {
+                alert("Error al eliminar libro: " + err.message);
+            }
+        }
+    }
+
     // Cálculo de Días Calendario de Retraso/Vencimiento
     function getOverdueStatus(dueDateStr) {
+        if (!dueDateStr) return 0;
         const today = new Date();
         today.setHours(0,0,0,0);
 
@@ -858,49 +938,96 @@
         due.setHours(0,0,0,0);
 
         const diffMs = today - due;
-        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        return diffDays;
+        return Math.floor(diffMs / (1000 * 60 * 60 * 24));
     }
 
     function renderLoans() {
         const query = document.getElementById('searchPerson').value.toLowerCase();
+        const filterSede = document.getElementById('filterSedeLoan').value;
         const tbody = document.querySelector('#loansTable tbody');
         tbody.innerHTML = '';
 
-        loans.filter(l => l.personName.toLowerCase().includes(query) || (l.sede && l.sede.toLowerCase().includes(query)))
-             .forEach(l => {
-                const overdueDays = getOverdueStatus(l.dueDate);
-                let statusBadge = "";
-                const sedeText = l.sede || 'Sede Conrado (Atenea)';
+        loans.filter(l => {
+            const matchesQuery = l.personName.toLowerCase().includes(query) || 
+                                 l.bookTitle.toLowerCase().includes(query);
+            const matchesSede = !filterSede || (l.sede === filterSede);
+            return matchesQuery && matchesSede;
+        }).forEach(l => {
+            const overdueDays = getOverdueStatus(l.dueDate);
+            let statusBadge = "";
+            const sedeText = l.sede || 'Sede Conrado (Atenea)';
 
-                if (overdueDays > 0) {
-                    statusBadge = `<span class="badge-overdue">préstamo vencido ${overdueDays}</span>`;
-                } else if (overdueDays === 0) {
-                    statusBadge = `<span class="badge-active" style="background:#C6A052; color:#000;">Vence Hoy</span>`;
-                } else {
-                    statusBadge = `<span class="badge-active">Quedan ${Math.abs(overdueDays)} día(s)</span>`;
+            if (overdueDays > 0) {
+                statusBadge = `<span class="badge-overdue">préstamo vencido ${overdueDays}d</span>`;
+            } else if (overdueDays === 0) {
+                statusBadge = `<span class="badge-active" style="background:#C6A052; color:#000;">Vence Hoy</span>`;
+            } else {
+                statusBadge = `<span class="badge-active">Quedan ${Math.abs(overdueDays)} día(s)</span>`;
+            }
+
+            tbody.innerHTML += `<tr>
+                <td><span class="badge-sede">${sedeText}</span></td>
+                <td><strong>${l.personName}</strong></td>
+                <td>${l.role} (${l.group})</td>
+                <td>${l.bookTitle}</td>
+                <td>${l.dueDate}</td>
+                <td>${statusBadge}</td>
+                <td>
+                    <button class="btn-return" onclick="returnLoan('${l.id}')">📥 Devolver</button>
+                    <button class="btn-renew" onclick="renewLoan('${l.id}')">🔄 Renovar 10d</button>
+                    <button class="btn-edit" onclick="openEditLoanModal('${l.id}')">✏️ Editar</button>
+                    <button class="btn-delete" onclick="deleteLoan('${l.id}')">🗑️ Eliminar</button>
+                </td>
+            </tr>`;
+        });
+    }
+
+    // DEVOLUCIÓN DE LIBRO (+1 DISPONIBLE, -1 PRESTADO)
+    async function returnLoan(loanId) {
+        const loan = loans.find(l => l.id === loanId);
+        if (!loan) return;
+
+        if (!confirm(`¿Confirmar la devolución del libro "${loan.bookTitle}" de ${loan.personName}?`)) {
+            return;
+        }
+
+        try {
+            if (loan.bookId) {
+                const bookDoc = await db.collection("books").doc(loan.bookId).get();
+                if (bookDoc.exists) {
+                    const bookData = bookDoc.data();
+                    const currentCopies = Number(bookData.copies || 0);
+                    const currentBorrowed = Number(bookData.borrowed || 0);
+                    await db.collection("books").doc(loan.bookId).update({
+                        copies: currentCopies + 1,
+                        borrowed: Math.max(0, currentBorrowed - 1)
+                    });
                 }
+            }
+            await db.collection("loans").doc(loanId).delete();
+            alert("Devolución registrada exitosamente. Se liberó el ejemplar en el inventario.");
+        } catch (error) {
+            alert("Error al devolver préstamo: " + error.message);
+        }
+    }
 
-                tbody.innerHTML += `<tr>
-                    <td><span class="badge-sede">${sedeText}</span></td>
-                    <td><strong>${l.personName}</strong></td>
-                    <td>${l.role} (${l.group})</td>
-                    <td>${l.bookTitle}</td>
-                    <td>${l.dueDate}</td>
-                    <td>${statusBadge}</td>
-                    <td>
-                        <button class="btn-edit" onclick="openEditLoanModal('${l.id}')">✏️ Editar</button>
-                        <button class="btn-renew" onclick="renewLoan('${l.id}')">🔄 Renovar 10 días</button>
-                    </td>
-                </tr>`;
-             });
+    async function deleteLoan(loanId) {
+        if (confirm("¿Estás seguro de eliminar este registro de préstamo?")) {
+            try {
+                await db.collection("loans").doc(loanId).delete();
+                alert("Registro de préstamo eliminado.");
+            } catch (err) {
+                alert("Error al eliminar préstamo: " + err.message);
+            }
+        }
     }
 
     function renderCalendar() {
         const tbody = document.querySelector('#calendarTable tbody');
         tbody.innerHTML = '';
 
-        const sortedLoans = [...loans].sort((a,b) => a.dueDate.localeCompare(b.dueDate));
+        const filterSede = document.getElementById('filterSedeCal') ? document.getElementById('filterSedeCal').value : '';
+        const sortedLoans = [...loans].filter(l => !filterSede || (l.sede === filterSede)).sort((a,b) => a.dueDate.localeCompare(b.dueDate));
 
         sortedLoans.forEach(l => {
             const overdueDays = getOverdueStatus(l.dueDate);
@@ -908,7 +1035,7 @@
             const sedeText = l.sede || 'Sede Conrado (Atenea)';
 
             if (overdueDays > 0) {
-                statusBadge = `<span class="badge-overdue">préstamo vencido ${overdueDays}</span>`;
+                statusBadge = `<span class="badge-overdue">préstamo vencido ${overdueDays}d</span>`;
             } else if (overdueDays === 0) {
                 statusBadge = `<span class="badge-active" style="background:#C6A052; color:#000;">Vence Hoy</span>`;
             } else {
@@ -922,8 +1049,9 @@
                 <td>${l.bookTitle}</td>
                 <td>${statusBadge}</td>
                 <td>
+                    <button class="btn-return" onclick="returnLoan('${l.id}')">📥 Devolver</button>
                     <button class="btn-renew" onclick="renewLoan('${l.id}')">🔄 Renovar</button>
-                    <button class="btn-edit" onclick="openEditLoanModal('${l.id}')">✏️ Modificar Fecha</button>
+                    <button class="btn-edit" onclick="openEditLoanModal('${l.id}')">✏️ Editar Fecha</button>
                 </td>
             </tr>`;
         });
@@ -953,6 +1081,7 @@
 
         const year = currentCalDate.getFullYear();
         const month = currentCalDate.getMonth();
+        const filterSede = document.getElementById('filterSedeCal') ? document.getElementById('filterSedeCal').value : '';
 
         document.getElementById('calMonthSelect').value = month;
         document.getElementById('calYearSelect').value = year;
@@ -979,7 +1108,11 @@
             const dateFormatted = `${year}-${mStr}-${dStr}`;
 
             const isToday = dateFormatted === todayStr ? 'today' : '';
-            const matchingLoans = loans.filter(l => l.dueDate === dateFormatted);
+            const matchingLoans = loans.filter(l => {
+                const matchesDate = l.dueDate === dateFormatted;
+                const matchesSede = !filterSede || (l.sede === filterSede);
+                return matchesDate && matchesSede;
+            });
 
             let dayHtml = `<div class="cal-cell ${isToday}"><div class="cal-day-num">${day}</div>`;
 
@@ -987,9 +1120,11 @@
                 const overdueDays = getOverdueStatus(l.dueDate);
                 const sedeShort = (l.sede && l.sede.includes('Parque')) ? 'Parque' : 'Conrado';
                 if (overdueDays > 0) {
-                    dayHtml += `<div class="cal-event-tag badge-overdue">[${sedeShort}] ⚠️ ${l.personName}: prestamo vencido ${overdueDays}</div>`;
+                    dayHtml += `<div class="cal-event-tag badge-overdue" title="${l.bookTitle}">[${sedeShort}] ⚠️ ${l.personName}: vencido ${overdueDays}d</div>`;
+                } else if (overdueDays === 0) {
+                    dayHtml += `<div class="cal-event-tag" style="background:#C6A052; color:#000; font-weight:bold;" title="${l.bookTitle}">[${sedeShort}] ⌛ ${l.personName} (Hoy)</div>`;
                 } else {
-                    dayHtml += `<div class="cal-event-tag badge-active">[${sedeShort}] 📖 ${l.personName}</div>`;
+                    dayHtml += `<div class="cal-event-tag badge-active" title="${l.bookTitle}">[${sedeShort}] 📖 ${l.personName}</div>`;
                 }
             });
 
@@ -1034,3 +1169,152 @@
 
         const worksheet = XLSX.utils.json_to_sheet(data);
         const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Inventario Libros");
+        XLSX.writeFile(workbook, "Inventario_Biblioteca_Atenea.xlsx");
+    }
+
+    function exportBooksToPDF() {
+        if (books.length === 0) {
+            alert("No hay libros registrados para exportar.");
+            return;
+        }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFontSize(16);
+        doc.text("Biblioteca Atenea - Inventario de Libros", 14, 15);
+        doc.setFontSize(10);
+        doc.text("Institución Educativa Mariscal Robledo", 14, 22);
+
+        const tableColumn = ["Sede", "Título", "Autor", "ISBN", "Año", "Disp.", "Prest."];
+        const tableRows = books.map(b => [
+            b.sede || "Sede Conrado (Atenea)",
+            b.title || "",
+            b.author || "",
+            b.isbn || "",
+            b.year || "",
+            b.copies !== undefined ? b.copies : 0,
+            b.borrowed !== undefined ? b.borrowed : 0
+        ]);
+
+        doc.autoTable({
+            head: [tableColumn],
+            body: tableRows,
+            startY: 28,
+            theme: 'grid',
+            headStyles: { fillColor: [61, 35, 20], textColor: [198, 160, 82] }
+        });
+
+        doc.save("Inventario_Biblioteca_Atenea.pdf");
+    }
+
+    // RENOVACIÓN DE PRÉSTAMO (+10 DÍAS)
+    async function renewLoan(docId) {
+        const loan = loans.find(l => l.id === docId);
+        if (!loan) return;
+
+        const parts = loan.dueDate.split('-');
+        const currentDue = new Date(parts[0], parts[1] - 1, parts[2]);
+        currentDue.setDate(currentDue.getDate() + 10);
+
+        const yyyy = currentDue.getFullYear();
+        const mm = String(currentDue.getMonth() + 1).padStart(2, '0');
+        const dd = String(currentDue.getDate()).padStart(2, '0');
+        const newDueDate = `${yyyy}-${mm}-${dd}`;
+
+        try {
+            await db.collection("loans").doc(docId).update({ dueDate: newDueDate });
+            alert(`Préstamo renovado 10 días más. Nueva fecha límite: ${newDueDate}`);
+        } catch (err) {
+            alert("Error al renovar préstamo: " + err.message);
+        }
+    }
+
+    // EDITAR LIBROS E INVENTARIO
+    function openEditBookModal(docId) {
+        const book = books.find(b => b.id === docId);
+        if (!book) return;
+
+        document.getElementById('editBookId').value = book.id;
+        document.getElementById('editSede').value = book.sede || "Sede Conrado (Atenea)";
+        document.getElementById('editTitle').value = book.title;
+        document.getElementById('editAuthor').value = book.author;
+        document.getElementById('editIsbn').value = book.isbn;
+        document.getElementById('editEditorial').value = book.editorial;
+        document.getElementById('editYear').value = book.year;
+        document.getElementById('editCopies').value = book.copies !== undefined ? book.copies : 0;
+        document.getElementById('editBorrowed').value = book.borrowed !== undefined ? book.borrowed : 0;
+        document.getElementById('editBookModal').style.display = 'block';
+    }
+
+    async function saveEditBook(e) {
+        e.preventDefault();
+        const id = document.getElementById('editBookId').value;
+        const updatedBook = {
+            sede: document.getElementById('editSede').value,
+            title: document.getElementById('editTitle').value.trim(),
+            author: document.getElementById('editAuthor').value.trim(),
+            isbn: document.getElementById('editIsbn').value.trim(),
+            editorial: document.getElementById('editEditorial').value.trim(),
+            year: document.getElementById('editYear').value,
+            copies: parseInt(document.getElementById('editCopies').value),
+            borrowed: parseInt(document.getElementById('editBorrowed').value)
+        };
+
+        try {
+            await db.collection("books").doc(id).update(updatedBook);
+            alert("Inventario del libro actualizado correctamente.");
+            closeModal('editBookModal');
+        } catch (err) {
+            alert("Error al actualizar libro: " + err.message);
+        }
+    }
+
+    // EDITAR REGISTRO DE PRÉSTAMO
+    function openEditLoanModal(docId) {
+        const loan = loans.find(l => l.id === docId);
+        if (!loan) return;
+
+        document.getElementById('editLoanId').value = loan.id;
+        document.getElementById('editLoanSede').value = loan.sede || "Sede Conrado (Atenea)";
+        document.getElementById('editPersonName').value = loan.personName;
+        document.getElementById('editPersonGroup').value = loan.group;
+        document.getElementById('editPersonRole').value = loan.role || "Alumnos";
+        document.getElementById('editBookTitle').value = loan.bookTitle;
+        document.getElementById('editDueDate').value = loan.dueDate;
+        document.getElementById('editLoanModal').style.display = 'block';
+    }
+
+    async function saveEditLoan(e) {
+        e.preventDefault();
+        const id = document.getElementById('editLoanId').value;
+        const updatedLoan = {
+            sede: document.getElementById('editLoanSede').value,
+            personName: document.getElementById('editPersonName').value.trim(),
+            group: document.getElementById('editPersonGroup').value.trim(),
+            role: document.getElementById('editPersonRole').value,
+            bookTitle: document.getElementById('editBookTitle').value.trim(),
+            dueDate: document.getElementById('editDueDate').value
+        };
+
+        try {
+            await db.collection("loans").doc(id).update(updatedLoan);
+            alert("Préstamo y fecha límite actualizados.");
+            closeModal('editLoanModal');
+        } catch (err) {
+            alert("Error al actualizar registro: " + err.message);
+        }
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = "none";
+        }
+    }
+</script>
+</body>
+</html>
