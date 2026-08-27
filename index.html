@@ -8,46 +8,47 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <style>
         :root {
-            --atenea-blue: #0A192F;
-            --atenea-gold: #C59B27;
-            --atenea-gold-light: #E5C158;
-            --atenea-bg: #F8F5EE;
-            --atenea-card-bg: #FFFFFF;
-            --danger-red: #A61C1C;
-            --success-green: #1B7A43;
-            --border-gold: #D4AF37;
+            --pergamino-bg: #F4EBE1;
+            --pergamino-card: #FAF4EB;
+            --tinta-sepia: #2B1B17;
+            --dorado-bronce: #C6A052;
+            --dorado-oscuro: #9E7B32;
+            --danger-carmesi: #8B0000;
+            --success-laurel: #2E5A27;
+            --borde-pergamino: #D8C3A5;
         }
 
         body {
-            font-family: 'Georgia', 'Times New Roman', serif;
+            font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif;
             margin: 0;
-            background-color: var(--atenea-bg);
-            color: #2C2C2C;
-            background-image: radial-gradient(#e4ded0 1px, transparent 1px);
-            background-size: 20px 20px;
+            background-color: var(--pergamino-bg);
+            color: var(--tinta-sepia);
+            background-image: 
+                radial-gradient(rgba(198, 160, 82, 0.08) 1px, transparent 0),
+                linear-gradient(to right, rgba(166, 110, 40, 0.03) 1px, transparent 0);
+            background-size: 24px 24px;
         }
 
-        /* HEADER ESTILO TEMPLO GRIEGO */
+        /* HEADER ESTILO PERGAMINO ATENIENSE */
         header {
-            background-color: var(--atenea-blue);
-            color: var(--atenea-gold);
-            padding: 20px 30px;
+            background: linear-gradient(135deg, #1A100C 0%, #3D2314 100%);
+            color: var(--dorado-bronce);
+            padding: 22px 30px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 25px;
-            border-bottom: 6px solid var(--atenea-gold);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            position: relative;
+            border-bottom: 5px solid var(--dorado-bronce);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.35);
         }
 
         .atenea-avatar {
             width: 90px;
             height: 90px;
             border-radius: 50%;
-            border: 3px solid var(--atenea-gold);
+            border: 3px solid var(--dorado-bronce);
             overflow: hidden;
-            box-shadow: 0 0 10px rgba(197, 155, 39, 0.5);
+            box-shadow: 0 0 12px rgba(198, 160, 82, 0.5);
             background-color: #000;
             flex-shrink: 0;
         }
@@ -60,36 +61,36 @@
 
         .header-titles h1 {
             margin: 0;
-            font-size: 2.4rem;
+            font-size: 2.3rem;
             letter-spacing: 2px;
             text-transform: uppercase;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
         }
 
         .header-titles p {
             margin: 5px 0 0;
-            color: #E6F1FF;
+            color: #E8D5B7;
             font-style: italic;
-            font-size: 1rem;
+            font-size: 1.05rem;
         }
 
-        /* NAVEGACIÓN ESTILO COLUMNAS */
+        /* NAVEGACIÓN ESTILO MANUSCRITO */
         nav {
             display: flex;
             justify-content: center;
-            background-color: #06101E;
-            border-bottom: 2px solid var(--atenea-gold);
+            background-color: #24140B;
+            border-bottom: 3px solid var(--dorado-bronce);
             flex-wrap: wrap;
         }
 
         nav button {
             background: none;
             border: none;
-            color: #CCD6F6;
+            color: #D8C3A5;
             padding: 16px 24px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: bold;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Palatino Linotype', serif;
             cursor: pointer;
             transition: 0.3s;
             border-bottom: 4px solid transparent;
@@ -98,9 +99,9 @@
         }
 
         nav button:hover, nav button.active {
-            color: var(--atenea-gold-light);
-            border-bottom: 4px solid var(--atenea-gold);
-            background-color: rgba(197, 155, 39, 0.12);
+            color: var(--dorado-bronce);
+            border-bottom: 4px solid var(--dorado-bronce);
+            background-color: rgba(198, 160, 82, 0.15);
         }
 
         .container {
@@ -113,59 +114,60 @@
         .section.active { display: block; }
 
         .card {
-            background: var(--atenea-card-bg);
+            background: var(--pergamino-card);
             padding: 28px;
-            border-radius: 6px;
-            box-shadow: 0 5px 18px rgba(0,0,0,0.06);
-            border: 1px solid #E2D9C8;
-            border-top: 5px solid var(--atenea-gold);
+            border-radius: 8px;
+            box-shadow: inset 0 0 15px rgba(120, 80, 20, 0.08), 0 5px 18px rgba(0,0,0,0.1);
+            border: 2px solid var(--borde-pergamino);
+            border-top: 5px solid var(--dorado-bronce);
             margin-bottom: 25px;
         }
 
         .card h2 {
             margin-top: 0;
-            color: var(--atenea-blue);
-            border-bottom: 2px solid #E8E2D5;
+            color: #3D2314;
+            border-bottom: 2px dashed var(--borde-pergamino);
             padding-bottom: 12px;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             letter-spacing: 1px;
         }
 
         .form-group { margin-bottom: 18px; }
-        label { display: block; margin-bottom: 6px; font-weight: bold; color: var(--atenea-blue); font-family: 'Segoe UI', sans-serif; }
+        label { display: block; margin-bottom: 6px; font-weight: bold; color: #3D2314; }
         
         input, select {
             width: 100%;
             padding: 11px;
-            border: 1px solid #CCC;
+            border: 1px solid var(--borde-pergamino);
             border-radius: 4px;
             box-sizing: border-box;
             font-size: 0.95rem;
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #FAFAFA;
+            font-family: inherit;
+            background-color: #FFFDF9;
+            color: var(--tinta-sepia);
         }
 
         input:focus, select:focus {
             outline: none;
-            border-color: var(--atenea-gold);
-            box-shadow: 0 0 5px rgba(197, 155, 39, 0.4);
+            border-color: var(--dorado-bronce);
+            box-shadow: 0 0 6px rgba(198, 160, 82, 0.4);
         }
 
         .btn {
-            background-color: var(--atenea-blue);
-            color: var(--atenea-gold);
-            border: 1px solid var(--atenea-gold);
+            background-color: #3D2314;
+            color: var(--dorado-bronce);
+            border: 1px solid var(--dorado-bronce);
             padding: 12px 24px;
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
             transition: 0.2s;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: inherit;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .btn:hover { background-color: var(--atenea-gold); color: var(--atenea-blue); }
+        .btn:hover { background-color: var(--dorado-bronce); color: #1A100C; }
 
         .btn-edit, .btn-renew {
             padding: 6px 12px;
@@ -174,28 +176,28 @@
             font-weight: bold;
             font-size: 0.82rem;
             transition: 0.2s;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: inherit;
             margin-right: 5px;
         }
 
         .btn-edit {
-            background-color: var(--atenea-blue);
-            color: var(--atenea-gold);
-            border: 1px solid var(--atenea-gold);
+            background-color: #3D2314;
+            color: var(--dorado-bronce);
+            border: 1px solid var(--dorado-bronce);
         }
 
-        .btn-edit:hover { background-color: var(--atenea-gold); color: var(--atenea-blue); }
+        .btn-edit:hover { background-color: var(--dorado-bronce); color: #3D2314; }
 
         .btn-renew {
-            background-color: var(--atenea-gold);
-            color: var(--atenea-blue);
-            border: 1px solid var(--atenea-blue);
+            background-color: var(--dorado-bronce);
+            color: #24140B;
+            border: 1px solid #24140B;
         }
 
-        .btn-renew:hover { background-color: var(--atenea-blue); color: var(--atenea-gold); }
+        .btn-renew:hover { background-color: #24140B; color: var(--dorado-bronce); }
 
         .btn-secondary {
-            background-color: #6c757d;
+            background-color: #7A6956;
             color: white;
             border: none;
             margin-left: 10px;
@@ -205,30 +207,29 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
-            font-family: 'Segoe UI', sans-serif;
         }
 
         th, td {
             padding: 12px 14px;
-            border: 1px solid #E5DFD3;
+            border: 1px solid var(--borde-pergamino);
             text-align: left;
         }
 
-        th { background-color: var(--atenea-blue); color: var(--atenea-gold); font-weight: 600; }
+        th { background-color: #3D2314; color: var(--dorado-bronce); font-weight: 600; }
 
         .badge-overdue { 
-            background: var(--danger-red); 
-            color: white; 
+            background: var(--danger-carmesi); 
+            color: #FFF; 
             padding: 5px 10px; 
             border-radius: 4px; 
             font-size: 0.85rem; 
             font-weight: bold; 
             display: inline-block;
-            box-shadow: 0 2px 5px rgba(166, 28, 28, 0.3);
+            box-shadow: 0 2px 5px rgba(139, 0, 0, 0.3);
         }
 
         .badge-active { 
-            background: var(--success-green); 
+            background: var(--success-laurel); 
             color: white; 
             padding: 5px 10px; 
             border-radius: 4px; 
@@ -238,21 +239,23 @@
         }
 
         .badge-available {
-            background-color: #E6F4EA;
-            color: var(--success-green);
-            padding: 4px 8px;
+            background-color: #E2EFE0;
+            color: var(--success-laurel);
+            padding: 5px 10px;
             border-radius: 4px;
             font-weight: bold;
-            border: 1px solid var(--success-green);
+            border: 1px solid var(--success-laurel);
+            display: inline-block;
         }
 
         .badge-unavailable {
-            background-color: #FCE8E6;
-            color: var(--danger-red);
-            padding: 4px 8px;
+            background-color: #F8E2E2;
+            color: var(--danger-carmesi);
+            padding: 5px 10px;
             border-radius: 4px;
             font-weight: bold;
-            border: 1px solid var(--danger-red);
+            border: 1px solid var(--danger-carmesi);
+            display: inline-block;
         }
 
         /* MODALES FLOTANTES PARA EDICIÓN */
@@ -269,7 +272,7 @@
         }
 
         .modal-content {
-            background-color: #fefefe;
+            background-color: var(--pergamino-card);
             margin: 3% auto;
             padding: 25px;
             border-radius: 8px;
@@ -279,7 +282,7 @@
         }
 
         .close {
-            color: #aaa;
+            color: #888;
             float: right;
             font-size: 28px;
             font-weight: bold;
@@ -296,19 +299,87 @@
         }
 
         .btn-day-preset {
-            background-color: #EAEAEA;
-            border: 1px solid #CCC;
+            background-color: #E8DFD3;
+            border: 1px solid var(--borde-pergamino);
             padding: 6px 12px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 0.85rem;
             font-weight: bold;
             transition: 0.2s;
+            color: #3D2314;
         }
 
         .btn-day-preset:hover {
-            background-color: var(--atenea-gold);
-            color: var(--atenea-blue);
+            background-color: var(--dorado-bronce);
+            color: #1A100C;
+        }
+
+        /* CALENDARIO ESTILO ESCRITORIO */
+        .desktop-calendar-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            background: #EFE4D6;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--borde-pergamino);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            background-color: var(--borde-pergamino);
+            border: 2px solid var(--borde-pergamino);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .cal-day-header {
+            background-color: #3D2314;
+            color: var(--dorado-bronce);
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .cal-cell {
+            background-color: #FFFDF9;
+            min-height: 85px;
+            padding: 6px;
+            box-sizing: border-box;
+            vertical-align: top;
+            position: relative;
+        }
+
+        .cal-cell.empty {
+            background-color: #EFE8DE;
+        }
+
+        .cal-cell.today {
+            background-color: #FFF9E6;
+            border: 2px solid var(--dorado-bronce);
+        }
+
+        .cal-day-num {
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: #3D2314;
+            margin-bottom: 4px;
+        }
+
+        .cal-event-tag {
+            font-size: 0.72rem;
+            padding: 2px 4px;
+            border-radius: 3px;
+            margin-bottom: 3px;
+            word-break: break-word;
+            line-height: 1.1;
         }
     </style>
 </head>
@@ -319,7 +390,7 @@
         <img id="ateneaImg" src="https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=300&q=80" alt="Diosa Atenea">
     </div>
     <div class="header-titles">
-        <h1>🏛️ Biblioteca Atenea</h1>
+        <h1>📜 Biblioteca Atenea</h1>
         <p>Institución Educativa Mariscal Robledo — "Cultura, Sabiduría y Conocimiento"</p>
     </div>
 </header>
@@ -335,7 +406,7 @@
 
     <div id="libros" class="section active">
         <div class="card">
-            <h2>🏛️ Inventario General de Libros</h2>
+            <h2>📚 Inventario General de Libros</h2>
             <input type="text" id="searchBook" placeholder="🔍 Buscar por título, autor o ISBN..." onkeyup="renderBooks()">
             <table id="booksTable">
                 <thead>
@@ -344,7 +415,7 @@
                         <th>Autor</th>
                         <th>ISBN</th>
                         <th>Editorial / Año</th>
-                        <th>Disponibles</th>
+                        <th>Ejemplares Disponibles</th>
                         <th>No Disponibles (Prestados)</th>
                         <th>Acción</th>
                     </tr>
@@ -377,11 +448,11 @@
                 </div>
                 <div class="form-group">
                     <label>Título exacto o ISBN del Libro:</label>
-                    <input type="text" id="loanIsbn" placeholder="Escriba el título o ISBN para descontar inventario" required>
+                    <input type="text" id="loanIsbn" placeholder="Escriba el título o ISBN del libro..." required>
                 </div>
                 
                 <div class="form-group">
-                    <label>Duración del Préstamo (Selecciona una opción o modifica la fecha):</label>
+                    <label>Duración del Préstamo (Selección Rápida):</label>
                     <div class="preset-days">
                         <button type="button" class="btn-day-preset" onclick="setPresetDays(10)">10 Días (Mínimo)</button>
                         <button type="button" class="btn-day-preset" onclick="setPresetDays(15)">15 Días</button>
@@ -391,7 +462,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Fecha Límite de Devolución (Modificable manualmente):</label>
+                    <label>Fecha Límite de Devolución (Modificable):</label>
                     <input type="date" id="dueDate" required>
                 </div>
 
@@ -420,15 +491,32 @@
 
     <div id="calendario" class="section">
         <div class="card">
-            <h2>📅 Control de Fechas Límites, Plazos y Renovaciones</h2>
-            <p>Monitoreo automático de días transcurridos y vencimientos en días calendario.</p>
+            <h2>📅 Calendario Visual de Escritorio</h2>
+            <p>Navega dinámicamente entre meses y años para consultar las entregas pendientes.</p>
+            
+            <div class="desktop-calendar-controls">
+                <div>
+                    <button class="btn" style="padding: 6px 14px;" onclick="prevCalMonth()">◄ Mes Anterior</button>
+                    <button class="btn" style="padding: 6px 14px;" onclick="nextCalMonth()">Mes Siguiente ►</button>
+                </div>
+                <div>
+                    <select id="calMonthSelect" onchange="updateDesktopCalNav()" style="width: 140px; display:inline-block; margin-right:5px;"></select>
+                    <select id="calYearSelect" onchange="updateDesktopCalNav()" style="width: 100px; display:inline-block;"></select>
+                </div>
+            </div>
+
+            <div id="desktopCalendarGrid" class="calendar-grid"></div>
+        </div>
+
+        <div class="card">
+            <h2>📋 Resumen de Fechas Límites y Vencimientos</h2>
             <table id="calendarTable">
                 <thead>
                     <tr>
                         <th>Fecha Límite</th>
                         <th>Usuario</th>
                         <th>Libro Prestado</th>
-                        <th>Estado / Tiempo Transcurrido</th>
+                        <th>Estado / Días Transcurridos</th>
                         <th>Acción</th>
                     </tr>
                 </thead>
@@ -462,7 +550,7 @@
                     <input type="number" id="year" required>
                 </div>
                 <div class="form-group">
-                    <label>Cantidad Inicial de Ejemplares Disponibles:</label>
+                    <label>Cantidad de Ejemplares Disponibles Iniciales:</label>
                     <input type="number" id="copies" min="1" value="1" required>
                 </div>
                 <button type="submit" class="btn">Guardar Libro en Inventario</button>
@@ -475,7 +563,7 @@
 <div id="editBookModal" class="modal">
     <div class="modal-content card">
         <span class="close" onclick="closeModal('editBookModal')">&times;</span>
-        <h2>✏️ Editar Datos del Libro e Inventario</h2>
+        <h2>✏️ Editar Libro e Inventario</h2>
         <form id="editBookForm" onsubmit="saveEditBook(event)">
             <input type="hidden" id="editBookId">
             <div class="form-group"><label>Título:</label><input type="text" id="editTitle" required></div>
@@ -502,7 +590,7 @@
 <div id="editLoanModal" class="modal">
     <div class="modal-content card">
         <span class="close" onclick="closeModal('editLoanModal')">&times;</span>
-        <h2>✏️ Editar Registro y Modificar Fecha Límite</h2>
+        <h2>✏️ Editar Préstamo y Fecha Límite</h2>
         <form id="editLoanForm" onsubmit="saveEditLoan(event)">
             <input type="hidden" id="editLoanId">
             <div class="form-group"><label>Nombre Completo:</label><input type="text" id="editPersonName" required></div>
@@ -527,7 +615,7 @@
 </div>
 
 <script>
-    // NUEVA CONFIGURACIÓN DE FIREBASE (BIBLIOATENEA)
+    // CONFIGURACIÓN DE FIREBASE (BIBLIOATENEA)
     const firebaseConfig = {
       apiKey: "AIzaSyAdaw4cJJBvtb8WJot0Ewf7ZsNL5QFtkwE",
       authDomain: "biblioatenea.firebaseapp.com",
@@ -543,9 +631,12 @@
     let books = [];
     let loans = [];
 
-    // Cargar plazo por defecto (10 días) al iniciar
+    // Estado del Calendario de Escritorio
+    let currentCalDate = new Date();
+
     window.onload = function() {
         setPresetDays(10);
+        initCalSelectors();
     };
 
     function setPresetDays(days) {
@@ -557,7 +648,7 @@
         document.getElementById('dueDate').value = `${yyyy}-${mm}-${dd}`;
     }
 
-    // Sincronización instantánea desde la nube
+    // Sincronización desde Firestore
     db.collection("books").onSnapshot((snapshot) => {
         books = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderBooks();
@@ -567,6 +658,7 @@
         loans = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderLoans();
         renderCalendar();
+        renderDesktopCalendar();
     });
 
     function showTab(tabId, element) {
@@ -574,8 +666,10 @@
         document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
         if (element) element.classList.add('active');
+        if(tabId === 'calendario') renderDesktopCalendar();
     }
 
+    // 1. INVENTARIO DE LIBROS Y MANEJO DE DISPONIBILIDAD
     async function addBook(e) {
         e.preventDefault();
         const initialCopies = parseInt(document.getElementById('copies').value) || 1;
@@ -591,12 +685,12 @@
 
         try {
             await db.collection("books").add(newBook);
-            alert("Libro registrado globalmente en el inventario.");
+            alert("Libro agregado exitosamente al inventario.");
             document.getElementById('bookForm').reset();
             setPresetDays(10);
             showTab('libros');
         } catch (error) {
-            alert("Error al conectar con la base de datos: " + error.message);
+            alert("Error al guardar libro: " + error.message);
         }
     }
 
@@ -605,8 +699,16 @@
         const searchTarget = document.getElementById('loanIsbn').value.trim().toLowerCase();
         const book = books.find(b => b.isbn.toLowerCase() === searchTarget || b.title.toLowerCase().includes(searchTarget));
 
-        if (!book || (book.copies || 0) <= 0) {
-            alert("El libro no se encuentra en el inventario o no tiene ejemplares disponibles.");
+        if (!book) {
+            alert("El libro no existe en el inventario.");
+            return;
+        }
+
+        const currentCopies = book.copies !== undefined ? Number(book.copies) : 0;
+        const currentBorrowed = book.borrowed !== undefined ? Number(book.borrowed) : 0;
+
+        if (currentCopies <= 0) {
+            alert("¡No hay ejemplares disponibles de este libro! Todos están prestados.");
             return;
         }
 
@@ -623,19 +725,17 @@
         try {
             await db.collection("loans").add(newLoan);
             
-            // Descontar de disponibles y sumar a no disponibles
-            const currentCopies = book.copies || 0;
-            const currentBorrowed = book.borrowed || 0;
+            // Actualizar inventario: -1 disponible, +1 prestado
             await db.collection("books").doc(book.id).update({ 
-                copies: Math.max(0, currentCopies - 1),
+                copies: currentCopies - 1,
                 borrowed: currentBorrowed + 1
             });
 
-            alert("Préstamo registrado exitosamente.");
+            alert("Préstamo registrado. Se actualizó la disponibilidad del libro.");
             document.getElementById('loanForm').reset();
             setPresetDays(10);
         } catch (error) {
-            alert("Error al procesar el préstamo: " + error.message);
+            alert("Error al procesar préstamo: " + error.message);
         }
     }
 
@@ -646,22 +746,22 @@
 
         books.filter(b => b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query) || b.isbn.includes(query))
              .forEach(b => {
-                const available = b.copies !== undefined ? b.copies : 0;
-                const borrowed = b.borrowed !== undefined ? b.borrowed : 0;
+                const available = b.copies !== undefined ? Number(b.copies) : 0;
+                const borrowed = b.borrowed !== undefined ? Number(b.borrowed) : 0;
 
                 tbody.innerHTML += `<tr>
                     <td><strong>${b.title}</strong></td>
                     <td>${b.author}</td>
                     <td>${b.isbn}</td>
                     <td>${b.editorial} (${b.year})</td>
-                    <td><span class="badge-available">${available} disponible(s)</span></td>
-                    <td><span class="badge-unavailable">${borrowed} no disponible(s)</span></td>
+                    <td><span class="badge-available">✔ ${available} Disponible(s)</span></td>
+                    <td><span class="badge-unavailable">✖ ${borrowed} No disponible(s)</span></td>
                     <td><button class="btn-edit" onclick="openEditBookModal('${b.id}')">✏️ Editar</button></td>
                 </tr>`;
              });
     }
 
-    // Función auxiliar para calcular días calendario de diferencia
+    // Cálculo de Días Calendario de Retraso/Vencimiento
     function getOverdueStatus(dueDateStr) {
         const today = new Date();
         today.setHours(0,0,0,0);
@@ -670,7 +770,7 @@
         const due = new Date(parts[0], parts[1] - 1, parts[2]);
         due.setHours(0,0,0,0);
 
-        const diffMs = today - due; // Si es positivo, ya venció
+        const diffMs = today - due;
         const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
         return diffDays;
     }
@@ -688,7 +788,7 @@
                 if (overdueDays > 0) {
                     statusBadge = `<span class="badge-overdue">préstamo vencido ${overdueDays}</span>`;
                 } else if (overdueDays === 0) {
-                    statusBadge = `<span class="badge-active" style="background:#E5C158; color:#000;">Vence hoy</span>`;
+                    statusBadge = `<span class="badge-active" style="background:#C6A052; color:#000;">Vence Hoy</span>`;
                 } else {
                     statusBadge = `<span class="badge-active">Quedan ${Math.abs(overdueDays)} día(s)</span>`;
                 }
@@ -711,7 +811,6 @@
         const tbody = document.querySelector('#calendarTable tbody');
         tbody.innerHTML = '';
 
-        // Ordenar préstamos por fecha más próxima a vencer
         const sortedLoans = [...loans].sort((a,b) => a.dueDate.localeCompare(b.dueDate));
 
         sortedLoans.forEach(l => {
@@ -721,7 +820,7 @@
             if (overdueDays > 0) {
                 statusBadge = `<span class="badge-overdue">préstamo vencido ${overdueDays}</span>`;
             } else if (overdueDays === 0) {
-                statusBadge = `<span class="badge-active" style="background:#E5C158; color:#000;">Vence hoy</span>`;
+                statusBadge = `<span class="badge-active" style="background:#C6A052; color:#000;">Vence Hoy</span>`;
             } else {
                 statusBadge = `<span class="badge-active">Quedan ${Math.abs(overdueDays)} día(s)</span>`;
             }
@@ -739,7 +838,95 @@
         });
     }
 
-    // RENOVACIÓN DE PRÉSTAMO (+10 DÍAS)
+    // 2. CALENDARIO INTERACTIVO DE ESCRITORIO
+    function initCalSelectors() {
+        const monthSelect = document.getElementById('calMonthSelect');
+        const yearSelect = document.getElementById('calYearSelect');
+        const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+        monthSelect.innerHTML = '';
+        months.forEach((m, idx) => {
+            monthSelect.innerHTML += `<option value="${idx}">${m}</option>`;
+        });
+
+        yearSelect.innerHTML = '';
+        const currentYear = new Date().getFullYear();
+        for (let y = currentYear - 5; y <= currentYear + 15; y++) {
+            yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+        }
+    }
+
+    function renderDesktopCalendar() {
+        const grid = document.getElementById('desktopCalendarGrid');
+        if (!grid) return;
+
+        const year = currentCalDate.getFullYear();
+        const month = currentCalDate.getMonth();
+
+        document.getElementById('calMonthSelect').value = month;
+        document.getElementById('calYearSelect').value = year;
+
+        const dayNames = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+        grid.innerHTML = '';
+
+        // Días de cabecera
+        dayNames.forEach(d => {
+            grid.innerHTML += `<div class="cal-day-header">${d}</div>`;
+        });
+
+        const firstDayIndex = new Date(year, month, 1).getDay();
+        const totalDays = new Date(year, month + 1, 0).getDate();
+
+        // Celdas vacías previas
+        for (let i = 0; i < firstDayIndex; i++) {
+            grid.innerHTML += `<div class="cal-cell empty"></div>`;
+        }
+
+        const todayStr = new Date().toISOString().split('T')[0];
+
+        // Días del mes
+        for (let day = 1; day <= totalDays; day++) {
+            const mStr = String(month + 1).padStart(2, '0');
+            const dStr = String(day).padStart(2, '0');
+            const dateFormatted = `${year}-${mStr}-${dStr}`;
+
+            const isToday = dateFormatted === todayStr ? 'today' : '';
+            const matchingLoans = loans.filter(l => l.dueDate === dateFormatted);
+
+            let dayHtml = `<div class="cal-cell ${isToday}"><div class="cal-day-num">${day}</div>`;
+
+            matchingLoans.forEach(l => {
+                const overdueDays = getOverdueStatus(l.dueDate);
+                if (overdueDays > 0) {
+                    dayHtml += `<div class="cal-event-tag badge-overdue">⚠️ ${l.personName}: prestamo vencido ${overdueDays}</div>`;
+                } else {
+                    dayHtml += `<div class="cal-event-tag badge-active">📖 ${l.personName}</div>`;
+                }
+            });
+
+            dayHtml += `</div>`;
+            grid.innerHTML += dayHtml;
+        }
+    }
+
+    function prevCalMonth() {
+        currentCalDate.setMonth(currentCalDate.getMonth() - 1);
+        renderDesktopCalendar();
+    }
+
+    function nextCalMonth() {
+        currentCalDate.setMonth(currentCalDate.getMonth() + 1);
+        renderDesktopCalendar();
+    }
+
+    function updateDesktopCalNav() {
+        const m = parseInt(document.getElementById('calMonthSelect').value);
+        const y = parseInt(document.getElementById('calYearSelect').value);
+        currentCalDate = new Date(y, m, 1);
+        renderDesktopCalendar();
+    }
+
+    // RENOVACIÓN (+10 DÍAS)
     async function renewLoan(docId) {
         const loan = loans.find(l => l.id === docId);
         if (!loan) return;
@@ -754,13 +941,13 @@
 
         try {
             await db.collection("loans").doc(docId).update({ dueDate: newDueDate });
-            alert(`Préstamo renovado exitosamente por 10 días más. Nueva fecha límite: ${newDueDate}`);
+            alert(`Préstamo renovado exitosamente 10 días más. Nueva fecha límite: ${newDueDate}`);
         } catch (err) {
             alert("Error al renovar préstamo: " + err.message);
         }
     }
 
-    // FUNCIONALIDADES DE EDICIÓN DE LIBROS
+    // EDITAR LIBROS E INVENTARIO
     function openEditBookModal(docId) {
         const book = books.find(b => b.id === docId);
         if (!book) return;
@@ -791,14 +978,14 @@
 
         try {
             await db.collection("books").doc(id).update(updatedBook);
-            alert("Libro e inventario actualizados correctamente.");
+            alert("Inventario del libro actualizado correctamente.");
             closeModal('editBookModal');
         } catch (err) {
             alert("Error al actualizar libro: " + err.message);
         }
     }
 
-    // FUNCIONALIDADES DE EDICIÓN DE PRÉSTAMOS Y FECHAS
+    // EDITAR REGISTRO DE PRÉSTAMO Y FECHAS
     function openEditLoanModal(docId) {
         const loan = loans.find(l => l.id === docId);
         if (!loan) return;
@@ -825,7 +1012,7 @@
 
         try {
             await db.collection("loans").doc(id).update(updatedLoan);
-            alert("Registro de préstamo y fecha límite actualizados.");
+            alert("Préstamo y fecha límite actualizados.");
             closeModal('editLoanModal');
         } catch (err) {
             alert("Error al actualizar registro: " + err.message);
