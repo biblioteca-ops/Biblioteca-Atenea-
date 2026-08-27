@@ -6,6 +6,10 @@
     <title>Biblioteca Atenea - I.E. Mariscal Robledo</title>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    
     <style>
         :root {
             --pergamino-bg: #F4EBE1;
@@ -169,6 +173,27 @@
 
         .btn:hover { background-color: var(--dorado-bronce); color: #1A100C; }
 
+        .btn-export {
+            background-color: #2E5A27;
+            color: #FFF;
+            border: 1px solid #1e3d1a;
+            padding: 8px 16px;
+            font-size: 0.88rem;
+            margin-right: 8px;
+        }
+
+        .btn-export:hover { background-color: #1e3d1a; color: #FFF; }
+
+        .btn-pdf {
+            background-color: #8B0000;
+            color: #FFF;
+            border: 1px solid #5a0000;
+            padding: 8px 16px;
+            font-size: 0.88rem;
+        }
+
+        .btn-pdf:hover { background-color: #5a0000; color: #FFF; }
+
         .btn-edit, .btn-renew {
             padding: 6px 12px;
             border-radius: 4px;
@@ -258,6 +283,16 @@
             display: inline-block;
         }
 
+        .badge-sede {
+            background-color: #EFE4D6;
+            color: #3D2314;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            border: 1px solid var(--borde-pergamino);
+            font-size: 0.85rem;
+        }
+
         /* MODALES FLOTANTES PARA EDICIÓN */
         .modal {
             display: none;
@@ -315,7 +350,7 @@
             color: #1A100C;
         }
 
-        /* CALENDARIO ESTILO ESCRITORIO */
+        /* CALENDARIO ESCRITORIO */
         .desktop-calendar-controls {
             display: flex;
             justify-content: space-between;
@@ -357,9 +392,7 @@
             position: relative;
         }
 
-        .cal-cell.empty {
-            background-color: #EFE8DE;
-        }
+        .cal-cell.empty { background-color: #EFE8DE; }
 
         .cal-cell.today {
             background-color: #FFF9E6;
@@ -380,6 +413,14 @@
             margin-bottom: 3px;
             word-break: break-word;
             line-height: 1.1;
+        }
+
+        .export-bar {
+            margin-top: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
         }
     </style>
 </head>
@@ -407,15 +448,23 @@
     <div id="libros" class="section active">
         <div class="card">
             <h2>📚 Inventario General de Libros</h2>
-            <input type="text" id="searchBook" placeholder="🔍 Buscar por título, autor o ISBN..." onkeyup="renderBooks()">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between; align-items: center;">
+                <input type="text" id="searchBook" placeholder="🔍 Buscar por título, autor, ISBN o sede..." onkeyup="renderBooks()" style="flex: 1; min-width: 250px;">
+                <div class="export-bar">
+                    <button class="btn btn-export" onclick="exportBooksToExcel()">📊 Descargar Excel</button>
+                    <button class="btn btn-pdf" onclick="exportBooksToPDF()">📄 Descargar PDF</button>
+                </div>
+            </div>
+
             <table id="booksTable">
                 <thead>
                     <tr>
+                        <th>Sede</th>
                         <th>Título</th>
                         <th>Autor</th>
                         <th>ISBN</th>
                         <th>Editorial / Año</th>
-                        <th>Ejemplares Disponibles</th>
+                        <th>Disponibles</th>
                         <th>No Disponibles (Prestados)</th>
                         <th>Acción</th>
                     </tr>
@@ -429,6 +478,13 @@
         <div class="card">
             <h2>📜 Registrar Nuevo Préstamo</h2>
             <form id="loanForm" onsubmit="registerLoan(event)">
+                <div class="form-group">
+                    <label>Sede Institucional donde se realiza el préstamo:</label>
+                    <select id="loanSede" required>
+                        <option value="Sede Conrado (Atenea)">Sede Conrado (Atenea)</option>
+                        <option value="Sede Parque (Ana Frank)">Sede Parque (Ana Frank)</option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label>Nombre Completo de la Persona:</label>
                     <input type="text" id="personName" placeholder="Ej: Juan Pérez" required>
@@ -472,10 +528,11 @@
 
         <div class="card">
             <h2>Consultar Historial de Préstamos</h2>
-            <input type="text" id="searchPerson" placeholder="🔍 Buscar por nombre de usuario..." onkeyup="renderLoans()">
+            <input type="text" id="searchPerson" placeholder="🔍 Buscar por usuario o sede..." onkeyup="renderLoans()">
             <table id="loansTable">
                 <thead>
                     <tr>
+                        <th>Sede</th>
                         <th>Usuario</th>
                         <th>Rol / Grupo</th>
                         <th>Libro Prestado</th>
@@ -492,7 +549,7 @@
     <div id="calendario" class="section">
         <div class="card">
             <h2>📅 Calendario Visual de Escritorio</h2>
-            <p>Navega dinámicamente entre meses y años para consultar las entregas pendientes.</p>
+            <p>Navega dinámicamente entre meses y años para consultar las entregas pendientes por sede.</p>
             
             <div class="desktop-calendar-controls">
                 <div>
@@ -513,6 +570,7 @@
             <table id="calendarTable">
                 <thead>
                     <tr>
+                        <th>Sede</th>
                         <th>Fecha Límite</th>
                         <th>Usuario</th>
                         <th>Libro Prestado</th>
@@ -529,6 +587,13 @@
         <div class="card">
             <h2>➕ Agregar Nuevo Libro al Inventario</h2>
             <form id="bookForm" onsubmit="addBook(event)">
+                <div class="form-group">
+                    <label>Sede donde estará ubicado el libro:</label>
+                    <select id="sede" required>
+                        <option value="Sede Conrado (Atenea)">Sede Conrado (Atenea)</option>
+                        <option value="Sede Parque (Ana Frank)">Sede Parque (Ana Frank)</option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label>Título del Libro:</label>
                     <input type="text" id="title" required>
@@ -566,6 +631,13 @@
         <h2>✏️ Editar Libro e Inventario</h2>
         <form id="editBookForm" onsubmit="saveEditBook(event)">
             <input type="hidden" id="editBookId">
+            <div class="form-group">
+                <label>Sede:</label>
+                <select id="editSede" required>
+                    <option value="Sede Conrado (Atenea)">Sede Conrado (Atenea)</option>
+                    <option value="Sede Parque (Ana Frank)">Sede Parque (Ana Frank)</option>
+                </select>
+            </div>
             <div class="form-group"><label>Título:</label><input type="text" id="editTitle" required></div>
             <div class="form-group"><label>Autor:</label><input type="text" id="editAuthor" required></div>
             <div class="form-group"><label>ISBN:</label><input type="text" id="editIsbn" required></div>
@@ -593,6 +665,13 @@
         <h2>✏️ Editar Préstamo y Fecha Límite</h2>
         <form id="editLoanForm" onsubmit="saveEditLoan(event)">
             <input type="hidden" id="editLoanId">
+            <div class="form-group">
+                <label>Sede:</label>
+                <select id="editLoanSede" required>
+                    <option value="Sede Conrado (Atenea)">Sede Conrado (Atenea)</option>
+                    <option value="Sede Parque (Ana Frank)">Sede Parque (Ana Frank)</option>
+                </select>
+            </div>
             <div class="form-group"><label>Nombre Completo:</label><input type="text" id="editPersonName" required></div>
             <div class="form-group"><label>Grupo / Grado:</label><input type="text" id="editPersonGroup" required></div>
             <div class="form-group"><label>Tipo de Usuario:</label>
@@ -669,11 +748,12 @@
         if(tabId === 'calendario') renderDesktopCalendar();
     }
 
-    // 1. INVENTARIO DE LIBROS Y MANEJO DE DISPONIBILIDAD
+    // 1. INVENTARIO DE LIBROS CON SEDES
     async function addBook(e) {
         e.preventDefault();
         const initialCopies = parseInt(document.getElementById('copies').value) || 1;
         const newBook = {
+            sede: document.getElementById('sede').value,
             title: document.getElementById('title').value.trim(),
             author: document.getElementById('author').value.trim(),
             isbn: document.getElementById('isbn').value.trim(),
@@ -713,6 +793,7 @@
         }
 
         const newLoan = {
+            sede: document.getElementById('loanSede').value,
             personName: document.getElementById('personName').value.trim(),
             group: document.getElementById('personGroup').value.trim(),
             role: document.getElementById('personRole').value,
@@ -744,21 +825,27 @@
         const tbody = document.querySelector('#booksTable tbody');
         tbody.innerHTML = '';
 
-        books.filter(b => b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query) || b.isbn.includes(query))
-             .forEach(b => {
-                const available = b.copies !== undefined ? Number(b.copies) : 0;
-                const borrowed = b.borrowed !== undefined ? Number(b.borrowed) : 0;
+        books.filter(b => 
+            b.title.toLowerCase().includes(query) || 
+            b.author.toLowerCase().includes(query) || 
+            b.isbn.includes(query) ||
+            (b.sede && b.sede.toLowerCase().includes(query))
+        ).forEach(b => {
+            const available = b.copies !== undefined ? Number(b.copies) : 0;
+            const borrowed = b.borrowed !== undefined ? Number(b.borrowed) : 0;
+            const sedeText = b.sede || 'Sede Conrado (Atenea)';
 
-                tbody.innerHTML += `<tr>
-                    <td><strong>${b.title}</strong></td>
-                    <td>${b.author}</td>
-                    <td>${b.isbn}</td>
-                    <td>${b.editorial} (${b.year})</td>
-                    <td><span class="badge-available">✔ ${available} Disponible(s)</span></td>
-                    <td><span class="badge-unavailable">✖ ${borrowed} No disponible(s)</span></td>
-                    <td><button class="btn-edit" onclick="openEditBookModal('${b.id}')">✏️ Editar</button></td>
-                </tr>`;
-             });
+            tbody.innerHTML += `<tr>
+                <td><span class="badge-sede">🏛️ ${sedeText}</span></td>
+                <td><strong>${b.title}</strong></td>
+                <td>${b.author}</td>
+                <td>${b.isbn}</td>
+                <td>${b.editorial} (${b.year})</td>
+                <td><span class="badge-available">✔ ${available} Disp.</span></td>
+                <td><span class="badge-unavailable">✖ ${borrowed} Prest.</span></td>
+                <td><button class="btn-edit" onclick="openEditBookModal('${b.id}')">✏️ Editar</button></td>
+            </tr>`;
+        });
     }
 
     // Cálculo de Días Calendario de Retraso/Vencimiento
@@ -780,10 +867,11 @@
         const tbody = document.querySelector('#loansTable tbody');
         tbody.innerHTML = '';
 
-        loans.filter(l => l.personName.toLowerCase().includes(query))
+        loans.filter(l => l.personName.toLowerCase().includes(query) || (l.sede && l.sede.toLowerCase().includes(query)))
              .forEach(l => {
                 const overdueDays = getOverdueStatus(l.dueDate);
                 let statusBadge = "";
+                const sedeText = l.sede || 'Sede Conrado (Atenea)';
 
                 if (overdueDays > 0) {
                     statusBadge = `<span class="badge-overdue">préstamo vencido ${overdueDays}</span>`;
@@ -794,6 +882,7 @@
                 }
 
                 tbody.innerHTML += `<tr>
+                    <td><span class="badge-sede">${sedeText}</span></td>
                     <td><strong>${l.personName}</strong></td>
                     <td>${l.role} (${l.group})</td>
                     <td>${l.bookTitle}</td>
@@ -816,6 +905,7 @@
         sortedLoans.forEach(l => {
             const overdueDays = getOverdueStatus(l.dueDate);
             let statusBadge = "";
+            const sedeText = l.sede || 'Sede Conrado (Atenea)';
 
             if (overdueDays > 0) {
                 statusBadge = `<span class="badge-overdue">préstamo vencido ${overdueDays}</span>`;
@@ -826,6 +916,7 @@
             }
 
             tbody.innerHTML += `<tr>
+                <td><span class="badge-sede">${sedeText}</span></td>
                 <td><strong>${l.dueDate}</strong></td>
                 <td>${l.personName} (${l.role})</td>
                 <td>${l.bookTitle}</td>
@@ -838,7 +929,7 @@
         });
     }
 
-    // 2. CALENDARIO INTERACTIVO DE ESCRITORIO
+    // CALENDARIO INTERACTIVO
     function initCalSelectors() {
         const monthSelect = document.getElementById('calMonthSelect');
         const yearSelect = document.getElementById('calYearSelect');
@@ -869,7 +960,6 @@
         const dayNames = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
         grid.innerHTML = '';
 
-        // Días de cabecera
         dayNames.forEach(d => {
             grid.innerHTML += `<div class="cal-day-header">${d}</div>`;
         });
@@ -877,14 +967,12 @@
         const firstDayIndex = new Date(year, month, 1).getDay();
         const totalDays = new Date(year, month + 1, 0).getDate();
 
-        // Celdas vacías previas
         for (let i = 0; i < firstDayIndex; i++) {
             grid.innerHTML += `<div class="cal-cell empty"></div>`;
         }
 
         const todayStr = new Date().toISOString().split('T')[0];
 
-        // Días del mes
         for (let day = 1; day <= totalDays; day++) {
             const mStr = String(month + 1).padStart(2, '0');
             const dStr = String(day).padStart(2, '0');
@@ -897,10 +985,11 @@
 
             matchingLoans.forEach(l => {
                 const overdueDays = getOverdueStatus(l.dueDate);
+                const sedeShort = (l.sede && l.sede.includes('Parque')) ? 'Parque' : 'Conrado';
                 if (overdueDays > 0) {
-                    dayHtml += `<div class="cal-event-tag badge-overdue">⚠️ ${l.personName}: prestamo vencido ${overdueDays}</div>`;
+                    dayHtml += `<div class="cal-event-tag badge-overdue">[${sedeShort}] ⚠️ ${l.personName}: prestamo vencido ${overdueDays}</div>`;
                 } else {
-                    dayHtml += `<div class="cal-event-tag badge-active">📖 ${l.personName}</div>`;
+                    dayHtml += `<div class="cal-event-tag badge-active">[${sedeShort}] 📖 ${l.personName}</div>`;
                 }
             });
 
@@ -926,108 +1015,22 @@
         renderDesktopCalendar();
     }
 
-    // RENOVACIÓN (+10 DÍAS)
-    async function renewLoan(docId) {
-        const loan = loans.find(l => l.id === docId);
-        if (!loan) return;
-
-        const currentDue = new Date(loan.dueDate + "T00:00:00");
-        currentDue.setDate(currentDue.getDate() + 10);
-
-        const yyyy = currentDue.getFullYear();
-        const mm = String(currentDue.getMonth() + 1).padStart(2, '0');
-        const dd = String(currentDue.getDate()).padStart(2, '0');
-        const newDueDate = `${yyyy}-${mm}-${dd}`;
-
-        try {
-            await db.collection("loans").doc(docId).update({ dueDate: newDueDate });
-            alert(`Préstamo renovado exitosamente 10 días más. Nueva fecha límite: ${newDueDate}`);
-        } catch (err) {
-            alert("Error al renovar préstamo: " + err.message);
+    // EXPORTAR A EXCEL Y PDF
+    function exportBooksToExcel() {
+        if (books.length === 0) {
+            alert("No hay libros registrados para exportar.");
+            return;
         }
-    }
+        const data = books.map(b => ({
+            "Sede": b.sede || "Sede Conrado (Atenea)",
+            "Título": b.title || "",
+            "Autor": b.author || "",
+            "ISBN": b.isbn || "",
+            "Editorial": b.editorial || "",
+            "Año": b.year || "",
+            "Ejemplares Disponibles": b.copies !== undefined ? b.copies : 0,
+            "Ejemplares No Disponibles": b.borrowed !== undefined ? b.borrowed : 0
+        }));
 
-    // EDITAR LIBROS E INVENTARIO
-    function openEditBookModal(docId) {
-        const book = books.find(b => b.id === docId);
-        if (!book) return;
-
-        document.getElementById('editBookId').value = book.id;
-        document.getElementById('editTitle').value = book.title;
-        document.getElementById('editAuthor').value = book.author;
-        document.getElementById('editIsbn').value = book.isbn;
-        document.getElementById('editEditorial').value = book.editorial;
-        document.getElementById('editYear').value = book.year;
-        document.getElementById('editCopies').value = book.copies !== undefined ? book.copies : 0;
-        document.getElementById('editBorrowed').value = book.borrowed !== undefined ? book.borrowed : 0;
-        document.getElementById('editBookModal').style.display = 'block';
-    }
-
-    async function saveEditBook(e) {
-        e.preventDefault();
-        const id = document.getElementById('editBookId').value;
-        const updatedBook = {
-            title: document.getElementById('editTitle').value.trim(),
-            author: document.getElementById('editAuthor').value.trim(),
-            isbn: document.getElementById('editIsbn').value.trim(),
-            editorial: document.getElementById('editEditorial').value.trim(),
-            year: document.getElementById('editYear').value,
-            copies: parseInt(document.getElementById('editCopies').value),
-            borrowed: parseInt(document.getElementById('editBorrowed').value)
-        };
-
-        try {
-            await db.collection("books").doc(id).update(updatedBook);
-            alert("Inventario del libro actualizado correctamente.");
-            closeModal('editBookModal');
-        } catch (err) {
-            alert("Error al actualizar libro: " + err.message);
-        }
-    }
-
-    // EDITAR REGISTRO DE PRÉSTAMO Y FECHAS
-    function openEditLoanModal(docId) {
-        const loan = loans.find(l => l.id === docId);
-        if (!loan) return;
-
-        document.getElementById('editLoanId').value = loan.id;
-        document.getElementById('editPersonName').value = loan.personName;
-        document.getElementById('editPersonGroup').value = loan.group;
-        document.getElementById('editPersonRole').value = loan.role || "Alumnos";
-        document.getElementById('editBookTitle').value = loan.bookTitle;
-        document.getElementById('editDueDate').value = loan.dueDate;
-        document.getElementById('editLoanModal').style.display = 'block';
-    }
-
-    async function saveEditLoan(e) {
-        e.preventDefault();
-        const id = document.getElementById('editLoanId').value;
-        const updatedLoan = {
-            personName: document.getElementById('editPersonName').value.trim(),
-            group: document.getElementById('editPersonGroup').value.trim(),
-            role: document.getElementById('editPersonRole').value,
-            bookTitle: document.getElementById('editBookTitle').value.trim(),
-            dueDate: document.getElementById('editDueDate').value
-        };
-
-        try {
-            await db.collection("loans").doc(id).update(updatedLoan);
-            alert("Préstamo y fecha límite actualizados.");
-            closeModal('editLoanModal');
-        } catch (err) {
-            alert("Error al actualizar registro: " + err.message);
-        }
-    }
-
-    function closeModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
-    }
-
-    window.onclick = function(event) {
-        if (event.target.classList.contains('modal')) {
-            event.target.style.display = "none";
-        }
-    }
-</script>
-</body>
-</html>
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
