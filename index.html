@@ -299,6 +299,17 @@
             display: inline-block;
         }
 
+        .badge-category {
+            background-color: #E8DFD3;
+            color: #3D2314;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            border: 1px solid var(--borde-pergamino);
+            font-size: 0.82rem;
+            display: inline-block;
+        }
+
         /* MODALES FLOTANTES PARA EDICIÓN */
         .modal {
             display: none;
@@ -449,6 +460,23 @@
             <h2>📚 Inventario General de Libros</h2>
             <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <input type="text" id="searchBook" placeholder="🔍 Buscar por título, autor, ISBN..." onkeyup="renderBooks()" style="flex: 2; min-width: 200px;">
+                
+                <select id="filterCategoryBook" onchange="renderBooks()" style="flex: 1; min-width: 170px;">
+                    <option value="">🏷️ Todas las Categorías</option>
+                    <option value="Matemáticas">Matemáticas</option>
+                    <option value="Literatura">Literatura</option>
+                    <option value="Historia">Historia</option>
+                    <option value="Ciencias Naturales">Ciencias Naturales</option>
+                    <option value="Ciencias Sociales">Ciencias Sociales</option>
+                    <option value="Filosofía y Psicología">Filosofía y Psicología</option>
+                    <option value="Tecnología e Informática">Tecnología e Informática</option>
+                    <option value="Idiomas e Inglés">Idiomas e Inglés</option>
+                    <option value="Arte y Música">Arte y Música</option>
+                    <option value="Religión y Ética">Religión y Ética</option>
+                    <option value="Cuentos e Infantil">Cuentos e Infantil</option>
+                    <option value="General / Otras">General / Otras</option>
+                </select>
+
                 <select id="filterSedeBook" onchange="renderBooks()" style="flex: 1; min-width: 180px;">
                     <option value="">🏛️ Todas las Sedes</option>
                     <option value="Sede Conrado (Atenea)">Sede Conrado (Atenea)</option>
@@ -462,10 +490,11 @@
                         <th>Sede</th>
                         <th>Título</th>
                         <th>Autor</th>
+                        <th>Categoría</th>
                         <th>ISBN</th>
                         <th>Editorial / Año</th>
                         <th>Disponibles</th>
-                        <th>No Disponibles (Prestados)</th>
+                        <th>Prestados</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -617,6 +646,24 @@
                     <input type="text" id="author" placeholder="Ej: Gabriel García Márquez" required>
                 </div>
                 <div class="form-group">
+                    <label>Categoría del Libro:</label>
+                    <select id="category" required>
+                        <option value="" disabled selected>-- Seleccione una Categoría --</option>
+                        <option value="Matemáticas">📐 Matemáticas</option>
+                        <option value="Literatura">📖 Literatura</option>
+                        <option value="Historia">📜 Historia</option>
+                        <option value="Ciencias Naturales">🌿 Ciencias Naturales (Biología, Química, Física)</option>
+                        <option value="Ciencias Sociales">🌍 Ciencias Sociales y Geografía</option>
+                        <option value="Filosofía y Psicología">🧠 Filosofía y Psicología</option>
+                        <option value="Tecnología e Informática">💻 Tecnología e Informática</option>
+                        <option value="Idiomas e Inglés">🗣️ Idiomas e Inglés</option>
+                        <option value="Arte y Música">🎨 Arte y Música</option>
+                        <option value="Religión y Ética">⚖️ Religión y Ética</option>
+                        <option value="Cuentos e Infantil">🧸 Cuentos e Infantil / Juvenil</option>
+                        <option value="General / Otras">📦 General / Otras</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label>ISBN:</label>
                     <input type="text" id="isbn" placeholder="Ej: 978-958-04-0000-0" required>
                 </div>
@@ -655,6 +702,23 @@
             </div>
             <div class="form-group"><label>Título:</label><input type="text" id="editTitle" required></div>
             <div class="form-group"><label>Autor:</label><input type="text" id="editAuthor" required></div>
+            <div class="form-group">
+                <label>Categoría:</label>
+                <select id="editCategory" required>
+                    <option value="Matemáticas">📐 Matemáticas</option>
+                    <option value="Literatura">📖 Literatura</option>
+                    <option value="Historia">📜 Historia</option>
+                    <option value="Ciencias Naturales">🌿 Ciencias Naturales (Biología, Química, Física)</option>
+                    <option value="Ciencias Sociales">🌍 Ciencias Sociales y Geografía</option>
+                    <option value="Filosofía y Psicología">🧠 Filosofía y Psicología</option>
+                    <option value="Tecnología e Informática">💻 Tecnología e Informática</option>
+                    <option value="Idiomas e Inglés">🗣️ Idiomas e Inglés</option>
+                    <option value="Arte y Música">🎨 Arte y Música</option>
+                    <option value="Religión y Ética">⚖️ Religión y Ética</option>
+                    <option value="Cuentos e Infantil">🧸 Cuentos e Infantil / Juvenil</option>
+                    <option value="General / Otras">📦 General / Otras</option>
+                </select>
+            </div>
             <div class="form-group"><label>ISBN:</label><input type="text" id="editIsbn" required></div>
             <div class="form-group"><label>Editorial:</label><input type="text" id="editEditorial" required></div>
             <div class="form-group"><label>Año:</label><input type="number" id="editYear" required></div>
@@ -764,7 +828,7 @@
         books.forEach(b => {
             const opt = document.createElement('option');
             opt.value = b.title;
-            opt.label = `[${b.sede || 'Conrado'}] ${b.title} (ISBN: ${b.isbn}) - ${b.copies || 0} dispon.`;
+            opt.label = `[${b.sede || 'Conrado'}] ${b.title} (${b.category || 'Sin cat.'}) - ${b.copies || 0} dispon.`;
             datalist.appendChild(opt);
         });
     }
@@ -777,7 +841,7 @@
         if(tabId === 'calendario') renderDesktopCalendar();
     }
 
-    // 1. INVENTARIO DE LIBROS CON SEDES
+    // 1. INVENTARIO DE LIBROS Y CATEGORÍAS
     async function addBook(e) {
         e.preventDefault();
         const initialCopies = parseInt(document.getElementById('copies').value) || 1;
@@ -785,6 +849,7 @@
             sede: document.getElementById('sede').value,
             title: document.getElementById('title').value.trim(),
             author: document.getElementById('author').value.trim(),
+            category: document.getElementById('category').value,
             isbn: document.getElementById('isbn').value.trim(),
             editorial: document.getElementById('editorial').value.trim(),
             year: document.getElementById('year').value,
@@ -803,6 +868,98 @@
         }
     }
 
+    function renderBooks() {
+        const tableBody = document.querySelector("#booksTable tbody");
+        if (!tableBody) return;
+        tableBody.innerHTML = "";
+
+        const search = document.getElementById("searchBook").value.toLowerCase();
+        const filterSede = document.getElementById("filterSedeBook").value;
+        const filterCategory = document.getElementById("filterCategoryBook").value;
+
+        const filtered = books.filter(b => {
+            const matchesSearch = (b.title || "").toLowerCase().includes(search) || 
+                                  (b.author || "").toLowerCase().includes(search) || 
+                                  (b.isbn || "").toLowerCase().includes(search) ||
+                                  (b.category || "").toLowerCase().includes(search);
+            const matchesSede = filterSede === "" || b.sede === filterSede;
+            const matchesCategory = filterCategory === "" || b.category === filterCategory;
+            return matchesSearch && matchesSede && matchesCategory;
+        });
+
+        filtered.forEach(b => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><span class="badge-sede">${b.sede || 'Sede Conrado'}</span></td>
+                <td><strong>${escapeHtml(b.title)}</strong></td>
+                <td>${escapeHtml(b.author)}</td>
+                <td><span class="badge-category">${escapeHtml(b.category || 'Sin categoría')}</span></td>
+                <td>${escapeHtml(b.isbn)}</td>
+                <td>${escapeHtml(b.editorial)} / ${b.year}</td>
+                <td><span class="${b.copies > 0 ? 'badge-available' : 'badge-unavailable'}">${b.copies}</span></td>
+                <td>${b.borrowed || 0}</td>
+                <td>
+                    <button class="btn-edit" onclick="openEditBookModal('${b.id}')">✏️ Edit</button>
+                    <button class="btn-delete" onclick="deleteBook('${b.id}')">🗑️ Del</button>
+                </td>
+            `;
+            tableBody.appendChild(tr);
+        });
+    }
+
+    function openEditBookModal(id) {
+        const book = books.find(b => b.id === id);
+        if (!book) return;
+        document.getElementById('editBookId').value = book.id;
+        document.getElementById('editSede').value = book.sede || 'Sede Conrado (Atenea)';
+        document.getElementById('editTitle').value = book.title || '';
+        document.getElementById('editAuthor').value = book.author || '';
+        document.getElementById('editCategory').value = book.category || 'General / Otras';
+        document.getElementById('editIsbn').value = book.isbn || '';
+        document.getElementById('editEditorial').value = book.editorial || '';
+        document.getElementById('editYear').value = book.year || '';
+        document.getElementById('editCopies').value = book.copies !== undefined ? book.copies : 0;
+        document.getElementById('editBorrowed').value = book.borrowed !== undefined ? book.borrowed : 0;
+        
+        document.getElementById('editBookModal').style.display = 'block';
+    }
+
+    async function saveEditBook(e) {
+        e.preventDefault();
+        const id = document.getElementById('editBookId').value;
+        const updatedBook = {
+            sede: document.getElementById('editSede').value,
+            title: document.getElementById('editTitle').value.trim(),
+            author: document.getElementById('editAuthor').value.trim(),
+            category: document.getElementById('editCategory').value,
+            isbn: document.getElementById('editIsbn').value.trim(),
+            editorial: document.getElementById('editEditorial').value.trim(),
+            year: document.getElementById('editYear').value,
+            copies: parseInt(document.getElementById('editCopies').value) || 0,
+            borrowed: parseInt(document.getElementById('editBorrowed').value) || 0
+        };
+
+        try {
+            await db.collection("books").doc(id).update(updatedBook);
+            alert("Libro e inventario actualizados correctamente.");
+            closeModal('editBookModal');
+        } catch (error) {
+            alert("Error al actualizar libro: " + error.message);
+        }
+    }
+
+    async function deleteBook(id) {
+        if (confirm("¿Está seguro de eliminar este libro del inventario?")) {
+            try {
+                await db.collection("books").doc(id).delete();
+                alert("Libro eliminado.");
+            } catch (error) {
+                alert("Error al eliminar libro: " + error.message);
+            }
+        }
+    }
+
+    // 2. PRÉSTAMOS
     async function registerLoan(e) {
         e.preventDefault();
         const searchTarget = document.getElementById('loanIsbn').value.trim().toLowerCase();
@@ -834,8 +991,6 @@
 
         try {
             await db.collection("loans").add(newLoan);
-            
-            // Actualizar inventario: -1 disponible, +1 prestado
             await db.collection("books").doc(book.id).update({ 
                 copies: currentCopies - 1,
                 borrowed: currentBorrowed + 1
@@ -849,349 +1004,98 @@
         }
     }
 
-    function renderBooks() {
-        const query = document.getElementById('searchBook').value.toLowerCase();
-        const filterSede = document.getElementById('filterSedeBook').value;
-        const tbody = document.querySelector('#booksTable tbody');
-        tbody.innerHTML = '';
-
-        books.filter(b => {
-            const matchesQuery = b.title.toLowerCase().includes(query) || 
-                                 b.author.toLowerCase().includes(query) || 
-                                 b.isbn.includes(query);
-            const matchesSede = !filterSede || (b.sede === filterSede);
-            return matchesQuery && matchesSede;
-        }).forEach(b => {
-            const available = b.copies !== undefined ? Number(b.copies) : 0;
-            const borrowed = b.borrowed !== undefined ? Number(b.borrowed) : 0;
-            const sedeText = b.sede || 'Sede Conrado (Atenea)';
-
-            tbody.innerHTML += `<tr>
-                <td><span class="badge-sede">🏛️ ${sedeText}</span></td>
-                <td><strong>${b.title}</strong></td>
-                <td>${b.author}</td>
-                <td>${b.isbn}</td>
-                <td>${b.editorial} (${b.year})</td>
-                <td><span class="badge-available">✔ ${available} Disp.</span></td>
-                <td><span class="badge-unavailable">✖ ${borrowed} Prest.</span></td>
-                <td>
-                    <button class="btn-edit" onclick="openEditBookModal('${b.id}')">✏️ Editar</button>
-                    <button class="btn-delete" onclick="deleteBook('${b.id}')">🗑️ Eliminar</button>
-                </td>
-            </tr>`;
-        });
-    }
-
-    async function deleteBook(bookId) {
-        const book = books.find(b => b.id === bookId);
-        if (!book) return;
-        if (confirm(`¿Estás seguro de que deseas eliminar el libro "${book.title}" del inventario?`)) {
-            try {
-                await db.collection("books").doc(bookId).delete();
-                alert("Libro eliminado del inventario.");
-            } catch (err) {
-                alert("Error al eliminar libro: " + err.message);
-            }
-        }
-    }
-
-    // Cálculo de Días Calendario de Retraso/Vencimiento
-    function getOverdueStatus(dueDateStr) {
-        if (!dueDateStr) return 0;
-        const today = new Date();
-        today.setHours(0,0,0,0);
-
-        const parts = dueDateStr.split('-');
-        const due = new Date(parts[0], parts[1] - 1, parts[2]);
-        due.setHours(0,0,0,0);
-
-        const diffMs = today - due;
-        return Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    }
-
     function renderLoans() {
-        const query = document.getElementById('searchPerson').value.toLowerCase();
-        const filterSede = document.getElementById('filterSedeLoan').value;
-        const tbody = document.querySelector('#loansTable tbody');
-        tbody.innerHTML = '';
+        const tableBody = document.querySelector("#loansTable tbody");
+        if (!tableBody) return;
+        tableBody.innerHTML = "";
 
-        loans.filter(l => {
-            const matchesQuery = l.personName.toLowerCase().includes(query) || 
-                                 l.bookTitle.toLowerCase().includes(query);
-            const matchesSede = !filterSede || (l.sede === filterSede);
-            return matchesQuery && matchesSede;
-        }).forEach(l => {
-            const overdueDays = getOverdueStatus(l.dueDate);
-            let statusBadge = "";
-            const sedeText = l.sede || 'Sede Conrado (Atenea)';
+        const search = document.getElementById("searchPerson").value.toLowerCase();
+        const filterSede = document.getElementById("filterSedeLoan").value;
+        const today = new Date().toISOString().split('T')[0];
 
-            if (overdueDays > 0) {
-                statusBadge = `<span class="badge-overdue">préstamo vencido ${overdueDays}d</span>`;
-            } else if (overdueDays === 0) {
-                statusBadge = `<span class="badge-active" style="background:#C6A052; color:#000;">Vence Hoy</span>`;
-            } else {
-                statusBadge = `<span class="badge-active">Quedan ${Math.abs(overdueDays)} día(s)</span>`;
-            }
+        const filtered = loans.filter(l => {
+            const matchesSearch = (l.personName || "").toLowerCase().includes(search) || 
+                                  (l.bookTitle || "").toLowerCase().includes(search) || 
+                                  (l.group || "").toLowerCase().includes(search);
+            const matchesSede = filterSede === "" || l.sede === filterSede;
+            return matchesSearch && matchesSede;
+        });
 
-            tbody.innerHTML += `<tr>
-                <td><span class="badge-sede">${sedeText}</span></td>
-                <td><strong>${l.personName}</strong></td>
-                <td>${l.role} (${l.group})</td>
-                <td>${l.bookTitle}</td>
+        filtered.forEach(l => {
+            const isOverdue = l.dueDate < today;
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><span class="badge-sede">${l.sede || 'Sede Conrado'}</span></td>
+                <td><strong>${escapeHtml(l.personName)}</strong></td>
+                <td>${escapeHtml(l.role)} - ${escapeHtml(l.group)}</td>
+                <td>${escapeHtml(l.bookTitle)}</td>
                 <td>${l.dueDate}</td>
-                <td>${statusBadge}</td>
                 <td>
-                    <button class="btn-return" onclick="returnLoan('${l.id}')">📥 Devolver</button>
-                    <button class="btn-renew" onclick="renewLoan('${l.id}')">🔄 Renovar 10d</button>
-                    <button class="btn-edit" onclick="openEditLoanModal('${l.id}')">✏️ Editar</button>
-                    <button class="btn-delete" onclick="deleteLoan('${l.id}')">🗑️ Eliminar</button>
+                    <span class="${isOverdue ? 'badge-overdue' : 'badge-active'}">
+                        ${isOverdue ? '⚠️ Vencido' : '✅ Activo'}
+                    </span>
                 </td>
-            </tr>`;
+                <td>
+                    <button class="btn-return" onclick="returnLoan('${l.id}')">🔄 Devolver</button>
+                    <button class="btn-renew" onclick="renewLoan('${l.id}')">➕ +7 Días</button>
+                    <button class="btn-edit" onclick="openEditLoanModal('${l.id}')">✏️</button>
+                    <button class="btn-delete" onclick="deleteLoan('${l.id}')">🗑️</button>
+                </td>
+            `;
+            tableBody.appendChild(tr);
         });
     }
 
-    // DEVOLUCIÓN DE LIBRO (+1 DISPONIBLE, -1 PRESTADO)
     async function returnLoan(loanId) {
         const loan = loans.find(l => l.id === loanId);
         if (!loan) return;
 
-        if (!confirm(`¿Confirmar la devolución del libro "${loan.bookTitle}" de ${loan.personName}?`)) {
-            return;
-        }
-
-        try {
-            if (loan.bookId) {
-                const bookDoc = await db.collection("books").doc(loan.bookId).get();
-                if (bookDoc.exists) {
-                    const bookData = bookDoc.data();
-                    const currentCopies = Number(bookData.copies || 0);
-                    const currentBorrowed = Number(bookData.borrowed || 0);
-                    await db.collection("books").doc(loan.bookId).update({
-                        copies: currentCopies + 1,
-                        borrowed: Math.max(0, currentBorrowed - 1)
-                    });
-                }
-            }
-            await db.collection("loans").doc(loanId).delete();
-            alert("Devolución registrada exitosamente. Se liberó el ejemplar en el inventario.");
-        } catch (error) {
-            alert("Error al devolver préstamo: " + error.message);
-        }
-    }
-
-    async function deleteLoan(loanId) {
-        if (confirm("¿Estás seguro de eliminar este registro de préstamo?")) {
+        if (confirm(`¿Confirmar devolución de "${loan.bookTitle}" por parte de ${loan.personName}?`)) {
             try {
                 await db.collection("loans").doc(loanId).delete();
-                alert("Registro de préstamo eliminado.");
-            } catch (err) {
-                alert("Error al eliminar préstamo: " + err.message);
-            }
-        }
-    }
-
-    function renderCalendar() {
-        const tbody = document.querySelector('#calendarTable tbody');
-        tbody.innerHTML = '';
-
-        const filterSede = document.getElementById('filterSedeCal') ? document.getElementById('filterSedeCal').value : '';
-        const sortedLoans = [...loans].filter(l => !filterSede || (l.sede === filterSede)).sort((a,b) => a.dueDate.localeCompare(b.dueDate));
-
-        sortedLoans.forEach(l => {
-            const overdueDays = getOverdueStatus(l.dueDate);
-            let statusBadge = "";
-            const sedeText = l.sede || 'Sede Conrado (Atenea)';
-
-            if (overdueDays > 0) {
-                statusBadge = `<span class="badge-overdue">préstamo vencido ${overdueDays}d</span>`;
-            } else if (overdueDays === 0) {
-                statusBadge = `<span class="badge-active" style="background:#C6A052; color:#000;">Vence Hoy</span>`;
-            } else {
-                statusBadge = `<span class="badge-active">Quedan ${Math.abs(overdueDays)} día(s)</span>`;
-            }
-
-            tbody.innerHTML += `<tr>
-                <td><span class="badge-sede">${sedeText}</span></td>
-                <td><strong>${l.dueDate}</strong></td>
-                <td>${l.personName} (${l.role})</td>
-                <td>${l.bookTitle}</td>
-                <td>${statusBadge}</td>
-                <td>
-                    <button class="btn-return" onclick="returnLoan('${l.id}')">📥 Devolver</button>
-                    <button class="btn-renew" onclick="renewLoan('${l.id}')">🔄 Renovar</button>
-                    <button class="btn-edit" onclick="openEditLoanModal('${l.id}')">✏️ Editar Fecha</button>
-                </td>
-            </tr>`;
-        });
-    }
-
-    // CALENDARIO INTERACTIVO
-    function initCalSelectors() {
-        const monthSelect = document.getElementById('calMonthSelect');
-        const yearSelect = document.getElementById('calYearSelect');
-        const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-
-        monthSelect.innerHTML = '';
-        months.forEach((m, idx) => {
-            monthSelect.innerHTML += `<option value="${idx}">${m}</option>`;
-        });
-
-        yearSelect.innerHTML = '';
-        const currentYear = new Date().getFullYear();
-        for (let y = currentYear - 5; y <= currentYear + 15; y++) {
-            yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
-        }
-    }
-
-    function renderDesktopCalendar() {
-        const grid = document.getElementById('desktopCalendarGrid');
-        if (!grid) return;
-
-        const year = currentCalDate.getFullYear();
-        const month = currentCalDate.getMonth();
-        const filterSede = document.getElementById('filterSedeCal') ? document.getElementById('filterSedeCal').value : '';
-
-        document.getElementById('calMonthSelect').value = month;
-        document.getElementById('calYearSelect').value = year;
-
-        const dayNames = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
-        grid.innerHTML = '';
-
-        dayNames.forEach(d => {
-            grid.innerHTML += `<div class="cal-day-header">${d}</div>`;
-        });
-
-        const firstDayIndex = new Date(year, month, 1).getDay();
-        const totalDays = new Date(year, month + 1, 0).getDate();
-
-        for (let i = 0; i < firstDayIndex; i++) {
-            grid.innerHTML += `<div class="cal-cell empty"></div>`;
-        }
-
-        const todayStr = new Date().toISOString().split('T')[0];
-
-        for (let day = 1; day <= totalDays; day++) {
-            const mStr = String(month + 1).padStart(2, '0');
-            const dStr = String(day).padStart(2, '0');
-            const dateFormatted = `${year}-${mStr}-${dStr}`;
-
-            const isToday = dateFormatted === todayStr ? 'today' : '';
-            const matchingLoans = loans.filter(l => {
-                const matchesDate = l.dueDate === dateFormatted;
-                const matchesSede = !filterSede || (l.sede === filterSede);
-                return matchesDate && matchesSede;
-            });
-
-            let dayHtml = `<div class="cal-cell ${isToday}"><div class="cal-day-num">${day}</div>`;
-
-            matchingLoans.forEach(l => {
-                const overdueDays = getOverdueStatus(l.dueDate);
-                const sedeShort = (l.sede && l.sede.includes('Parque')) ? 'Parque' : 'Conrado';
-                if (overdueDays > 0) {
-                    dayHtml += `<div class="cal-event-tag badge-overdue" title="${l.bookTitle}">[${sedeShort}] ⚠️ ${l.personName}: vencido ${overdueDays}d</div>`;
-                } else if (overdueDays === 0) {
-                    dayHtml += `<div class="cal-event-tag" style="background:#C6A052; color:#000; font-weight:bold;" title="${l.bookTitle}">[${sedeShort}] ⌛ ${l.personName} (Hoy)</div>`;
-                } else {
-                    dayHtml += `<div class="cal-event-tag badge-active" title="${l.bookTitle}">[${sedeShort}] 📖 ${l.personName}</div>`;
+                if (loan.bookId) {
+                    const book = books.find(b => b.id === loan.bookId);
+                    if (book) {
+                        await db.collection("books").doc(book.id).update({
+                            copies: (book.copies || 0) + 1,
+                            borrowed: Math.max(0, (book.borrowed || 1) - 1)
+                        });
+                    }
                 }
-            });
-
-            dayHtml += `</div>`;
-            grid.innerHTML += dayHtml;
+                alert("Devolución completada.");
+            } catch (error) {
+                alert("Error al procesar devolución: " + error.message);
+            }
         }
     }
 
-    function prevCalMonth() {
-        currentCalDate.setMonth(currentCalDate.getMonth() - 1);
-        renderDesktopCalendar();
-    }
-
-    function nextCalMonth() {
-        currentCalDate.setMonth(currentCalDate.getMonth() + 1);
-        renderDesktopCalendar();
-    }
-
-    function updateDesktopCalNav() {
-        const m = parseInt(document.getElementById('calMonthSelect').value);
-        const y = parseInt(document.getElementById('calYearSelect').value);
-        currentCalDate = new Date(y, m, 1);
-        renderDesktopCalendar();
-    }
-
-    // RENOVACIÓN DE PRÉSTAMO (+10 DÍAS)
-    async function renewLoan(docId) {
-        const loan = loans.find(l => l.id === docId);
+    async function renewLoan(loanId) {
+        const loan = loans.find(l => l.id === loanId);
         if (!loan) return;
 
-        const parts = loan.dueDate.split('-');
-        const currentDue = new Date(parts[0], parts[1] - 1, parts[2]);
-        currentDue.setDate(currentDue.getDate() + 10);
-
-        const yyyy = currentDue.getFullYear();
-        const mm = String(currentDue.getMonth() + 1).padStart(2, '0');
-        const dd = String(currentDue.getDate()).padStart(2, '0');
-        const newDueDate = `${yyyy}-${mm}-${dd}`;
+        const currentDueDate = new Date(loan.dueDate + 'T00:00:00');
+        currentDueDate.setDate(currentDueDate.getDate() + 7);
+        const newDueDateStr = currentDueDate.toISOString().split('T')[0];
 
         try {
-            await db.collection("loans").doc(docId).update({ dueDate: newDueDate });
-            alert(`Préstamo renovado 10 días más. Nueva fecha límite: ${newDueDate}`);
-        } catch (err) {
-            alert("Error al renovar préstamo: " + err.message);
+            await db.collection("loans").doc(loanId).update({ dueDate: newDueDateStr });
+            alert(`Préstamo renovado por 7 días. Nueva fecha límite: ${newDueDateStr}`);
+        } catch (error) {
+            alert("Error al renovar préstamo: " + error.message);
         }
     }
 
-    // EDITAR LIBROS E INVENTARIO
-    function openEditBookModal(docId) {
-        const book = books.find(b => b.id === docId);
-        if (!book) return;
-
-        document.getElementById('editBookId').value = book.id;
-        document.getElementById('editSede').value = book.sede || "Sede Conrado (Atenea)";
-        document.getElementById('editTitle').value = book.title;
-        document.getElementById('editAuthor').value = book.author;
-        document.getElementById('editIsbn').value = book.isbn;
-        document.getElementById('editEditorial').value = book.editorial;
-        document.getElementById('editYear').value = book.year;
-        document.getElementById('editCopies').value = book.copies !== undefined ? book.copies : 0;
-        document.getElementById('editBorrowed').value = book.borrowed !== undefined ? book.borrowed : 0;
-        document.getElementById('editBookModal').style.display = 'block';
-    }
-
-    async function saveEditBook(e) {
-        e.preventDefault();
-        const id = document.getElementById('editBookId').value;
-        const updatedBook = {
-            sede: document.getElementById('editSede').value,
-            title: document.getElementById('editTitle').value.trim(),
-            author: document.getElementById('editAuthor').value.trim(),
-            isbn: document.getElementById('editIsbn').value.trim(),
-            editorial: document.getElementById('editEditorial').value.trim(),
-            year: document.getElementById('editYear').value,
-            copies: parseInt(document.getElementById('editCopies').value),
-            borrowed: parseInt(document.getElementById('editBorrowed').value)
-        };
-
-        try {
-            await db.collection("books").doc(id).update(updatedBook);
-            alert("Inventario del libro actualizado correctamente.");
-            closeModal('editBookModal');
-        } catch (err) {
-            alert("Error al actualizar libro: " + err.message);
-        }
-    }
-
-    // EDITAR REGISTRO DE PRÉSTAMO
-    function openEditLoanModal(docId) {
-        const loan = loans.find(l => l.id === docId);
+    function openEditLoanModal(id) {
+        const loan = loans.find(l => l.id === id);
         if (!loan) return;
-
         document.getElementById('editLoanId').value = loan.id;
-        document.getElementById('editLoanSede').value = loan.sede || "Sede Conrado (Atenea)";
-        document.getElementById('editPersonName').value = loan.personName;
-        document.getElementById('editPersonGroup').value = loan.group;
-        document.getElementById('editPersonRole').value = loan.role || "Alumnos";
-        document.getElementById('editBookTitle').value = loan.bookTitle;
-        document.getElementById('editDueDate').value = loan.dueDate;
+        document.getElementById('editLoanSede').value = loan.sede || 'Sede Conrado (Atenea)';
+        document.getElementById('editPersonName').value = loan.personName || '';
+        document.getElementById('editPersonGroup').value = loan.group || '';
+        document.getElementById('editPersonRole').value = loan.role || 'Alumnos';
+        document.getElementById('editBookTitle').value = loan.bookTitle || '';
+        document.getElementById('editDueDate').value = loan.dueDate || '';
+
         document.getElementById('editLoanModal').style.display = 'block';
     }
 
@@ -1209,10 +1113,188 @@
 
         try {
             await db.collection("loans").doc(id).update(updatedLoan);
-            alert("Préstamo y fecha límite actualizados.");
+            alert("Préstamo actualizado.");
             closeModal('editLoanModal');
-        } catch (err) {
-            alert("Error al actualizar registro: " + err.message);
+        } catch (error) {
+            alert("Error al actualizar préstamo: " + error.message);
+        }
+    }
+
+    async function deleteLoan(id) {
+        if (confirm("¿Desea eliminar este registro de préstamo?")) {
+            try {
+                await db.collection("loans").doc(id).delete();
+                alert("Préstamo eliminado.");
+            } catch (error) {
+                alert("Error al eliminar préstamo: " + error.message);
+            }
+        }
+    }
+
+    // 3. CALENDARIO
+    function renderCalendar() {
+        const tableBody = document.querySelector("#calendarTable tbody");
+        if (!tableBody) return;
+        tableBody.innerHTML = "";
+
+        const filterSede = document.getElementById("filterSedeCal") ? document.getElementById("filterSedeCal").value : "";
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        const sortedLoans = [...loans].sort((a,b) => a.dueDate.localeCompare(b.dueDate));
+        const filtered = sortedLoans.filter(l => filterSede === "" || l.sede === filterSede);
+
+        filtered.forEach(l => {
+            const due = new Date(l.dueDate + 'T00:00:00');
+            const diffTime = due - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            let statusText = "";
+            let badgeClass = "";
+
+            if (diffDays < 0) {
+                statusText = `⚠️ Vencido hace ${Math.abs(diffDays)} día(s)`;
+                badgeClass = "badge-overdue";
+            } else if (diffDays === 0) {
+                statusText = "⏰ Vence HOY";
+                badgeClass = "badge-overdue";
+            } else if (diffDays <= 3) {
+                statusText = `⏳ Vence en ${diffDays} día(s)`;
+                badgeClass = "badge-overdue";
+            } else {
+                statusText = `🟢 Faltan ${diffDays} día(s)`;
+                badgeClass = "badge-active";
+            }
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><span class="badge-sede">${l.sede || 'Sede Conrado'}</span></td>
+                <td><strong>${l.dueDate}</strong></td>
+                <td>${escapeHtml(l.personName)} (${escapeHtml(l.group)})</td>
+                <td>${escapeHtml(l.bookTitle)}</td>
+                <td><span class="${badgeClass}">${statusText}</span></td>
+                <td>
+                    <button class="btn-return" onclick="returnLoan('${l.id}')">Devolver</button>
+                    <button class="btn-renew" onclick="renewLoan('${l.id}')">+7 Días</button>
+                </td>
+            `;
+            tableBody.appendChild(tr);
+        });
+    }
+
+    function initCalSelectors() {
+        const monthSelect = document.getElementById('calMonthSelect');
+        const yearSelect = document.getElementById('calYearSelect');
+        if (!monthSelect || !yearSelect) return;
+
+        const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        monthSelect.innerHTML = "";
+        months.forEach((m, idx) => {
+            const opt = document.createElement('option');
+            opt.value = idx;
+            opt.textContent = m;
+            monthSelect.appendChild(opt);
+        });
+
+        const currentYr = new Date().getFullYear();
+        yearSelect.innerHTML = "";
+        for (let y = currentYr - 2; y <= currentYr + 5; y++) {
+            const opt = document.createElement('option');
+            opt.value = y;
+            opt.textContent = y;
+            yearSelect.appendChild(opt);
+        }
+
+        monthSelect.value = currentCalDate.getMonth();
+        yearSelect.value = currentCalDate.getFullYear();
+    }
+
+    function updateDesktopCalNav() {
+        const monthSelect = document.getElementById('calMonthSelect');
+        const yearSelect = document.getElementById('calYearSelect');
+        currentCalDate.setMonth(parseInt(monthSelect.value));
+        currentCalDate.setFullYear(parseInt(yearSelect.value));
+        renderDesktopCalendar();
+    }
+
+    function prevCalMonth() {
+        currentCalDate.setMonth(currentCalDate.getMonth() - 1);
+        syncCalSelectors();
+        renderDesktopCalendar();
+    }
+
+    function nextCalMonth() {
+        currentCalDate.setMonth(currentCalDate.getMonth() + 1);
+        syncCalSelectors();
+        renderDesktopCalendar();
+    }
+
+    function syncCalSelectors() {
+        const monthSelect = document.getElementById('calMonthSelect');
+        const yearSelect = document.getElementById('calYearSelect');
+        if (monthSelect) monthSelect.value = currentCalDate.getMonth();
+        if (yearSelect) yearSelect.value = currentCalDate.getFullYear();
+    }
+
+    function renderDesktopCalendar() {
+        const grid = document.getElementById('desktopCalendarGrid');
+        if (!grid) return;
+        grid.innerHTML = "";
+
+        const dayHeaders = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+        dayHeaders.forEach(h => {
+            const div = document.createElement('div');
+            div.className = 'cal-day-header';
+            div.textContent = h;
+            grid.appendChild(div);
+        });
+
+        const year = currentCalDate.getFullYear();
+        const month = currentCalDate.getMonth();
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        const todayStr = new Date().toISOString().split('T')[0];
+        const filterSede = document.getElementById('filterSedeCal') ? document.getElementById('filterSedeCal').value : "";
+
+        for (let i = 0; i < firstDay; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cal-cell empty';
+            grid.appendChild(cell);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const cell = document.createElement('div');
+            cell.className = 'cal-cell';
+
+            const monthStr = String(month + 1).padStart(2, '0');
+            const dayStr = String(day).padStart(2, '0');
+            const dateStr = `${year}-${monthStr}-${dayStr}`;
+
+            if (dateStr === todayStr) {
+                cell.classList.add('today');
+            }
+
+            const numDiv = document.createElement('div');
+            numDiv.className = 'cal-day-num';
+            numDiv.textContent = day;
+            cell.appendChild(numDiv);
+
+            const loansDue = loans.filter(l => l.dueDate === dateStr && (filterSede === "" || l.sede === filterSede));
+
+            loansDue.forEach(l => {
+                const tag = document.createElement('div');
+                tag.className = 'cal-event-tag';
+                const isOverdue = dateStr < todayStr;
+                tag.style.backgroundColor = isOverdue ? '#8B0000' : '#C6A052';
+                tag.style.color = '#FFF';
+                tag.title = `${l.personName} - ${l.bookTitle}`;
+                tag.textContent = `📖 ${l.personName.split(' ')[0]}: ${(l.bookTitle || '').substring(0, 12)}...`;
+                cell.appendChild(tag);
+            });
+
+            grid.appendChild(cell);
         }
     }
 
@@ -1220,10 +1302,14 @@
         document.getElementById(modalId).style.display = 'none';
     }
 
-    window.onclick = function(event) {
-        if (event.target.classList.contains('modal')) {
-            event.target.style.display = "none";
-        }
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 </script>
 </body>
