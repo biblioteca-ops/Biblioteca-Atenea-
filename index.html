@@ -31,7 +31,7 @@
             background-size: 24px 24px;
         }
 
-        /* HEADER ESTILO PERGAMINO ATENIENSE */
+        /* HEADER */
         header {
             background: linear-gradient(135deg, #1A100C 0%, #3D2314 100%);
             color: var(--dorado-bronce);
@@ -76,7 +76,7 @@
             font-size: 1.05rem;
         }
 
-        /* NAVEGACIÓN ESTILO MANUSCRITO */
+        /* NAVEGACIÓN */
         nav {
             display: flex;
             justify-content: center;
@@ -171,7 +171,6 @@
 
         .btn:hover { background-color: var(--dorado-bronce); color: #1A100C; }
 
-        /* BOTONES DE ACCIÓN EN TABLAS */
         .btn-edit {
             background-color: #3D2314;
             color: var(--dorado-bronce);
@@ -310,7 +309,7 @@
             display: inline-block;
         }
 
-        /* MODALES FLOTANTES PARA EDICIÓN */
+        /* MODALES FLOTANTES */
         .modal {
             display: none;
             position: fixed;
@@ -454,27 +453,29 @@
 
 <div class="container">
 
-    <!-- SECCIÓN 1: LIBROS INVENTARIO -->
+    <!-- SECCIÓN 1: INVENTARIO DE LIBROS -->
     <div id="libros" class="section active">
         <div class="card">
             <h2>📚 Inventario General de Libros</h2>
             <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <input type="text" id="searchBook" placeholder="🔍 Buscar por título, autor, ISBN..." onkeyup="renderBooks()" style="flex: 2; min-width: 200px;">
+                <input type="text" id="searchBook" placeholder="🔍 Buscar por título, autor, ISBN, tipo..." onkeyup="renderBooks()" style="flex: 2; min-width: 200px;">
                 
+                <!-- FILTRO POR TIPO/CATEGORÍA DE LIBRO -->
                 <select id="filterCategoryBook" onchange="renderBooks()" style="flex: 1; min-width: 170px;">
-                    <option value="">🏷️ Todas las Categorías</option>
-                    <option value="Matemáticas">Matemáticas</option>
-                    <option value="Literatura">Literatura</option>
-                    <option value="Historia">Historia</option>
-                    <option value="Ciencias Naturales">Ciencias Naturales</option>
-                    <option value="Ciencias Sociales">Ciencias Sociales</option>
-                    <option value="Filosofía y Psicología">Filosofía y Psicología</option>
-                    <option value="Tecnología e Informática">Tecnología e Informática</option>
-                    <option value="Idiomas e Inglés">Idiomas e Inglés</option>
-                    <option value="Arte y Música">Arte y Música</option>
-                    <option value="Religión y Ética">Religión y Ética</option>
-                    <option value="Cuentos e Infantil">Cuentos e Infantil</option>
-                    <option value="General / Otras">General / Otras</option>
+                    <option value="">🏷️ Todos los Tipos / Categorías</option>
+                    <option value="Obras Literarias / Novelas">📖 Obras Literarias / Novelas</option>
+                    <option value="Textos Escolares / Guías">📘 Textos Escolares / Guías</option>
+                    <option value="Matemáticas y Geometría">📐 Matemáticas y Geometría</option>
+                    <option value="Ciencias Naturales">🌿 Ciencias Naturales (Biología, Química, Física)</option>
+                    <option value="Ciencias Sociales y Geografía">🌍 Ciencias Sociales y Geografía</option>
+                    <option value="Historia y Ciudadanía">📜 Historia y Ciudadanía</option>
+                    <option value="Filosofía y Psicología">🧠 Filosofía y Psicología</option>
+                    <option value="Tecnología e Informática">💻 Tecnología e Informática</option>
+                    <option value="Idiomas e Inglés">🗣️ Idiomas e Inglés</option>
+                    <option value="Arte, Música y Deportes">🎨 Arte, Música y Deportes</option>
+                    <option value="Diccionarios y Enciclopedias">📚 Diccionarios y Enciclopedias</option>
+                    <option value="Cuentos e Infantil">🧸 Cuentos e Infantil / Juvenil</option>
+                    <option value="General / Otras">📦 General / Otras</option>
                 </select>
 
                 <select id="filterSedeBook" onchange="renderBooks()" style="flex: 1; min-width: 180px;">
@@ -490,7 +491,7 @@
                         <th>Sede</th>
                         <th>Título</th>
                         <th>Autor</th>
-                        <th>Categoría</th>
+                        <th>Tipo / Categoría</th>
                         <th>ISBN</th>
                         <th>Editorial / Año</th>
                         <th>Disponibles</th>
@@ -503,7 +504,7 @@
         </div>
     </div>
 
-    <!-- SECCIÓN 2: REGISTROS -->
+    <!-- SECCIÓN 2: REGISTROS Y PRÉSTAMOS -->
     <div id="registros" class="section">
         <div class="card">
             <h2>📜 Registrar Nuevo Préstamo</h2>
@@ -625,7 +626,7 @@
         </div>
     </div>
 
-    <!-- SECCIÓN 4: AGREGAR LIBROS -->
+    <!-- SECCIÓN 4: AGREGAR LIBROS (OPCIÓN TIPO / CATEGORÍA AGREGADA JUNTO A AÑO Y DEMÁS CAMPOS) -->
     <div id="agregar-libros" class="section">
         <div class="card">
             <h2>➕ Agregar Nuevo Libro al Inventario</h2>
@@ -637,48 +638,58 @@
                         <option value="Sede Parque (Ana Frank)">Sede Parque (Ana Frank)</option>
                     </select>
                 </div>
+                
                 <div class="form-group">
                     <label>Título del Libro:</label>
                     <input type="text" id="title" placeholder="Ej: Cien años de soledad" required>
                 </div>
+
                 <div class="form-group">
                     <label>Autor:</label>
                     <input type="text" id="author" placeholder="Ej: Gabriel García Márquez" required>
                 </div>
+
+                <!-- OPCIÓN PARA DIFERENCIAR CADA TIPO/CATEGORÍA DE LIBRO AL AGREGARLO -->
                 <div class="form-group">
-                    <label>Categoría del Libro:</label>
+                    <label>Tipo / Categoría de Libro:</label>
                     <select id="category" required>
-                        <option value="" disabled selected>-- Seleccione una Categoría --</option>
-                        <option value="Matemáticas">📐 Matemáticas</option>
-                        <option value="Literatura">📖 Literatura</option>
-                        <option value="Historia">📜 Historia</option>
+                        <option value="" disabled selected>-- Seleccione el Tipo / Categoría del Libro --</option>
+                        <option value="Obras Literarias / Novelas">📖 Obras Literarias / Novelas</option>
+                        <option value="Textos Escolares / Guías">📘 Textos Escolares / Guías</option>
+                        <option value="Matemáticas y Geometría">📐 Matemáticas y Geometría</option>
                         <option value="Ciencias Naturales">🌿 Ciencias Naturales (Biología, Química, Física)</option>
-                        <option value="Ciencias Sociales">🌍 Ciencias Sociales y Geografía</option>
+                        <option value="Ciencias Sociales y Geografía">🌍 Ciencias Sociales y Geografía</option>
+                        <option value="Historia y Ciudadanía">📜 Historia y Ciudadanía</option>
                         <option value="Filosofía y Psicología">🧠 Filosofía y Psicología</option>
                         <option value="Tecnología e Informática">💻 Tecnología e Informática</option>
                         <option value="Idiomas e Inglés">🗣️ Idiomas e Inglés</option>
-                        <option value="Arte y Música">🎨 Arte y Música</option>
-                        <option value="Religión y Ética">⚖️ Religión y Ética</option>
+                        <option value="Arte, Música y Deportes">🎨 Arte, Música y Deportes</option>
+                        <option value="Diccionarios y Enciclopedias">📚 Diccionarios y Enciclopedias</option>
                         <option value="Cuentos e Infantil">🧸 Cuentos e Infantil / Juvenil</option>
                         <option value="General / Otras">📦 General / Otras</option>
                     </select>
                 </div>
+
                 <div class="form-group">
-                    <label>ISBN:</label>
+                    <label>ISBN / Código Único:</label>
                     <input type="text" id="isbn" placeholder="Ej: 978-958-04-0000-0" required>
                 </div>
+
                 <div class="form-group">
                     <label>Editorial:</label>
-                    <input type="text" id="editorial" placeholder="Ej: Editorial Sudamericana" required>
+                    <input type="text" id="editorial" placeholder="Ej: Editorial Normas / Panamericana" required>
                 </div>
+
                 <div class="form-group">
                     <label>Año de Publicación:</label>
-                    <input type="number" id="year" placeholder="Ej: 1967" required>
+                    <input type="number" id="year" placeholder="Ej: 2022" required>
                 </div>
+
                 <div class="form-group">
                     <label>Cantidad de Ejemplares Disponibles Iniciales:</label>
                     <input type="number" id="copies" min="1" value="1" required>
                 </div>
+
                 <button type="submit" class="btn">Guardar Libro en Inventario</button>
             </form>
         </div>
@@ -702,23 +713,26 @@
             </div>
             <div class="form-group"><label>Título:</label><input type="text" id="editTitle" required></div>
             <div class="form-group"><label>Autor:</label><input type="text" id="editAuthor" required></div>
+            
             <div class="form-group">
-                <label>Categoría:</label>
+                <label>Tipo / Categoría de Libro:</label>
                 <select id="editCategory" required>
-                    <option value="Matemáticas">📐 Matemáticas</option>
-                    <option value="Literatura">📖 Literatura</option>
-                    <option value="Historia">📜 Historia</option>
+                    <option value="Obras Literarias / Novelas">📖 Obras Literarias / Novelas</option>
+                    <option value="Textos Escolares / Guías">📘 Textos Escolares / Guías</option>
+                    <option value="Matemáticas y Geometría">📐 Matemáticas y Geometría</option>
                     <option value="Ciencias Naturales">🌿 Ciencias Naturales (Biología, Química, Física)</option>
-                    <option value="Ciencias Sociales">🌍 Ciencias Sociales y Geografía</option>
+                    <option value="Ciencias Sociales y Geografía">🌍 Ciencias Sociales y Geografía</option>
+                    <option value="Historia y Ciudadanía">📜 Historia y Ciudadanía</option>
                     <option value="Filosofía y Psicología">🧠 Filosofía y Psicología</option>
                     <option value="Tecnología e Informática">💻 Tecnología e Informática</option>
                     <option value="Idiomas e Inglés">🗣️ Idiomas e Inglés</option>
-                    <option value="Arte y Música">🎨 Arte y Música</option>
-                    <option value="Religión y Ética">⚖️ Religión y Ética</option>
+                    <option value="Arte, Música y Deportes">🎨 Arte, Música y Deportes</option>
+                    <option value="Diccionarios y Enciclopedias">📚 Diccionarios y Enciclopedias</option>
                     <option value="Cuentos e Infantil">🧸 Cuentos e Infantil / Juvenil</option>
                     <option value="General / Otras">📦 General / Otras</option>
                 </select>
             </div>
+
             <div class="form-group"><label>ISBN:</label><input type="text" id="editIsbn" required></div>
             <div class="form-group"><label>Editorial:</label><input type="text" id="editEditorial" required></div>
             <div class="form-group"><label>Año:</label><input type="number" id="editYear" required></div>
@@ -828,7 +842,7 @@
         books.forEach(b => {
             const opt = document.createElement('option');
             opt.value = b.title;
-            opt.label = `[${b.sede || 'Conrado'}] ${b.title} (${b.category || 'Sin cat.'}) - ${b.copies || 0} dispon.`;
+            opt.label = `[${b.sede || 'Conrado'}] ${b.title} (${b.category || 'Sin tipo'}) - ${b.copies || 0} dispon.`;
             datalist.appendChild(opt);
         });
     }
@@ -841,15 +855,16 @@
         if(tabId === 'calendario') renderDesktopCalendar();
     }
 
-    // 1. INVENTARIO DE LIBROS Y CATEGORÍAS
+    // 1. INVENTARIO DE LIBROS Y TIPO/CATEGORÍA
     async function addBook(e) {
         e.preventDefault();
         const initialCopies = parseInt(document.getElementById('copies').value) || 1;
+        
         const newBook = {
             sede: document.getElementById('sede').value,
             title: document.getElementById('title').value.trim(),
             author: document.getElementById('author').value.trim(),
-            category: document.getElementById('category').value,
+            category: document.getElementById('category').value, // REGISTRA EL TIPO DE LIBRO
             isbn: document.getElementById('isbn').value.trim(),
             editorial: document.getElementById('editorial').value.trim(),
             year: document.getElementById('year').value,
@@ -893,7 +908,7 @@
                 <td><span class="badge-sede">${b.sede || 'Sede Conrado'}</span></td>
                 <td><strong>${escapeHtml(b.title)}</strong></td>
                 <td>${escapeHtml(b.author)}</td>
-                <td><span class="badge-category">${escapeHtml(b.category || 'Sin categoría')}</span></td>
+                <td><span class="badge-category">${escapeHtml(b.category || 'Sin tipo')}</span></td>
                 <td>${escapeHtml(b.isbn)}</td>
                 <td>${escapeHtml(b.editorial)} / ${b.year}</td>
                 <td><span class="${b.copies > 0 ? 'badge-available' : 'badge-unavailable'}">${b.copies}</span></td>
