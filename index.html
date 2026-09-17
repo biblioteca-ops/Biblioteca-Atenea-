@@ -523,6 +523,10 @@
                     <option value="Sede Conrado (Atenea)">Sede Conrado (Atenea)</option>
                     <option value="Sede Parque (Ana Frank)">Sede Parque (Ana Frank)</option>
                 </select>
+
+                <!-- BOTONES DE DESCARGA E INVENTARIO EN EXCEL Y PDF -->
+                <button type="button" class="btn-export-excel" onclick="exportBooksToExcel()">📊 Exportar Excel</button>
+                <button type="button" class="btn-export-pdf" onclick="exportBooksToPDF()">📄 Exportar PDF</button>
             </div>
 
             <table id="booksTable">
@@ -608,7 +612,7 @@
                     <option value="Sede Conrado (Atenea)">Sede Conrado (Atenea)</option>
                     <option value="Sede Parque (Ana Frank)">Sede Parque (Ana Frank)</option>
                 </select>
-                <!-- BOTONES DE EXPORTACIÓN A EXCEL Y PDF -->
+                <!-- BOTONES DE EXPORTACIÓN A EXCEL Y PDF DE HISTORIAL -->
                 <button type="button" class="btn-export-excel" onclick="exportLoansToExcel()">📊 Exportar Excel</button>
                 <button type="button" class="btn-export-pdf" onclick="exportLoansToPDF()">📄 Exportar PDF</button>
             </div>
@@ -671,7 +675,7 @@
         </div>
     </div>
 
-    <!-- SECCIÓN 4: AGREGAR LIBROS (CON CAMPO DE DESCRIPCIÓN) -->
+    <!-- SECCIÓN 4: AGREGAR LIBROS -->
     <div id="agregar-libros" class="section">
         <div class="card">
             <h2>➕ Agregar Nuevo Libro al Inventario</h2>
@@ -714,7 +718,6 @@
                     </select>
                 </div>
 
-                <!-- CAMPO DE DESCRIPCIÓN / SINOPSIS -->
                 <div class="form-group">
                     <label>Descripción / Sinopsis del Libro:</label>
                     <textarea id="description" rows="3" placeholder="Breve descripción, sinopsis o notas sobre el estado físico del libro..."></textarea>
@@ -910,7 +913,7 @@
         if(tabId === 'calendario') renderDesktopCalendar();
     }
 
-    // 1. INVENTARIO DE LIBROS Y TIPO/CATEGORÍA + DESCRIPCIÓN
+    // 1. INVENTARIO DE LIBROS
     async function addBook(e) {
         e.preventDefault();
         const initialCopies = parseInt(document.getElementById('copies').value) || 1;
@@ -920,7 +923,7 @@
             title: document.getElementById('title').value.trim(),
             author: document.getElementById('author').value.trim(),
             category: document.getElementById('category').value,
-            description: document.getElementById('description').value.trim(), // GUARDA LA DESCRIPCIÓN
+            description: document.getElementById('description').value.trim(),
             isbn: document.getElementById('isbn').value.trim(),
             editorial: document.getElementById('editorial').value.trim(),
             year: document.getElementById('year').value,
@@ -978,6 +981,129 @@
             `;
             tableBody.appendChild(tr);
         });
+    }
+
+    // --- EXPORTACIÓN DE INVENTARIO (EXCEL Y PDF) ---
+    function exportBooksToExcel() {
+        const search = document.getElementById("searchBook").value.toLowerCase();
+        const filterSede = document.getElementById("filterSedeBook").value;
+        const filterCategory = document.getElementById("filterCategoryBook").value;
+
+        const filtered = books.filter(b => {
+            const matchesSearch = (b.title || "").toLowerCase().includes(search) || 
+                                  (b.author || "").toLowerCase().includes(search) || 
+                                  (b.isbn || "").toLowerCase().includes(search) ||
+                                  (b.category || "").toLowerCase().includes(search) ||
+                                  (b.description || "").toLowerCase().includes(search);
+            const matchesSede = filterSede === "" || b.sede === filterSede;
+            const matchesCategory = filterCategory === "" || b.category === filterCategory;
+            return matchesSearch && matchesSede && matchesCategory;
+        });
+
+        if (filtered.length === 0) {
+            alert("No hay libros en el inventario para exportar.");
+            return;
+        }
+
+        const today = new Date().toISOString().split('T')[0];
+
+        const dataToExport = filtered.map(b => ({
+            "Sede": b.sede || 'Sede Conrado',
+            "Título del Libro": b.title || '',
+            "Autor": b.author || '',
+            "Tipo / Categoría": b.category || 'Sin tipo',
+            "Descripción / Sinopsis": b.description || '',
+            "ISBN": b.isbn || '',
+            "Editorial": b.editorial || '',
+            "Año": b.year || '',
+            "Disponibles": b.copies !== undefined ? b.copies : 0,
+            "Prestados": b.borrowed !== undefined ? b.borrowed : 0
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Inventario_Libros");
+
+        worksheet["!cols"] = [
+            { wch: 22 }, { wch: 30 }, { wch: 22 }, { wch: 25 }, { wch: 35 }, { wch: 18 }, { wch: 20 }, { wch: 8 }, { wch: 12 }, { wch: 10 }
+        ];
+
+        XLSX.writeFile(workbook, `Inventario_Libros_Biblioteca_Atenea_${today}.xlsx`);
+    }
+
+    function exportBooksToPDF() {
+        const { jsPDF } = window.jspdf;
+        // Se usa orientación Horizontal (Landscape) para dar mejor espacio a todas las columnas
+        const doc = new jsPDF({ orientation: 'landscape' });
+
+        const search = document.getElementById("searchBook").value.toLowerCase();
+        const filterSede = document.getElementById("filterSedeBook").value;
+        const filterCategory = document.getElementById("filterCategoryBook").value;
+
+        const filtered = books.filter(b => {
+            const matchesSearch = (b.title || "").toLowerCase().includes(search) || 
+                                  (b.author || "").toLowerCase().includes(search) || 
+                                  (b.isbn || "").toLowerCase().includes(search) ||
+                                  (b.category || "").toLowerCase().includes(search) ||
+                                  (b.description || "").toLowerCase().includes(search);
+            const matchesSede = filterSede === "" || b.sede === filterSede;
+            const matchesCategory = filterCategory === "" || b.category === filterCategory;
+            return matchesSearch && matchesSede && matchesCategory;
+        });
+
+        if (filtered.length === 0) {
+            alert("No hay libros en el inventario para exportar.");
+            return;
+        }
+
+        const today = new Date().toISOString().split('T')[0];
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        doc.setTextColor(43, 27, 23);
+        doc.text("Biblioteca Atenea - I.E. Mariscal Robledo", 14, 15);
+
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "normal");
+        doc.text("Reporte General de Inventario de Libros", 14, 22);
+        doc.setFontSize(9);
+        doc.text(`Fecha de emisión: ${today} | Filtro Sede: ${filterSede || 'Todas'} | Categoría: ${filterCategory || 'Todas'}`, 14, 28);
+
+        const tableHeaders = [["Sede", "Título", "Autor", "Tipo / Categoría", "Descripción", "ISBN", "Editorial / Año", "Disp.", "Prest."]];
+        const tableData = filtered.map(b => [
+            b.sede || 'Sede Conrado',
+            b.title || '',
+            b.author || '',
+            b.category || 'Sin tipo',
+            b.description || '',
+            b.isbn || '',
+            `${b.editorial || ''} / ${b.year || ''}`,
+            b.copies !== undefined ? b.copies : 0,
+            b.borrowed !== undefined ? b.borrowed : 0
+        ]);
+
+        doc.autoTable({
+            startY: 32,
+            head: tableHeaders,
+            body: tableData,
+            headStyles: { fillColor: [61, 35, 20], textColor: [198, 160, 82], fontStyle: 'bold' },
+            alternateRowStyles: { fillColor: [250, 244, 235] },
+            styles: { fontSize: 8, cellPadding: 2.5 },
+            columnStyles: {
+                0: { cellWidth: 32 },
+                1: { cellWidth: 42 },
+                2: { cellWidth: 30 },
+                3: { cellWidth: 35 },
+                4: { cellWidth: 45 },
+                5: { cellWidth: 25 },
+                6: { cellWidth: 30 },
+                7: { cellWidth: 15, halign: 'center' },
+                8: { cellWidth: 15, halign: 'center' }
+            },
+            margin: { top: 32, left: 10, right: 10 }
+        });
+
+        doc.save(`Inventario_Libros_Biblioteca_Atenea_${today}.pdf`);
     }
 
     function openEditBookModal(id) {
@@ -1121,7 +1247,6 @@
         });
     }
 
-    // FUNCIONES DE EXPORTACIÓN (EXCEL Y PDF)
     function exportLoansToExcel() {
         const filterSede = document.getElementById("filterSedeLoan").value;
         const search = document.getElementById("searchPerson").value.toLowerCase();
