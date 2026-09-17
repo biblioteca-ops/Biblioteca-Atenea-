@@ -7,6 +7,11 @@
     <!-- Firebase SDKs (v9 compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <!-- Librerías externas para exportación a PDF y Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <style>
         :root {
@@ -137,7 +142,7 @@
         .form-group { margin-bottom: 18px; }
         label { display: block; margin-bottom: 6px; font-weight: bold; color: #3D2314; }
         
-        input, select {
+        input, select, textarea {
             width: 100%;
             padding: 11px;
             border: 1px solid var(--borde-pergamino);
@@ -149,7 +154,7 @@
             color: var(--tinta-sepia);
         }
 
-        input:focus, select:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--dorado-bronce);
             box-shadow: 0 0 6px rgba(198, 160, 82, 0.4);
@@ -170,6 +175,32 @@
         }
 
         .btn:hover { background-color: var(--dorado-bronce); color: #1A100C; }
+
+        .btn-export-excel {
+            background-color: #1D6F42;
+            color: white;
+            border: 1px solid #144D2E;
+            padding: 10px 16px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+        .btn-export-excel:hover { background-color: #144D2E; }
+
+        .btn-export-pdf {
+            background-color: #A61C1C;
+            color: white;
+            border: 1px solid #731313;
+            padding: 10px 16px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+        .btn-export-pdf:hover { background-color: #731313; }
 
         .btn-edit {
             background-color: #3D2314;
@@ -309,6 +340,16 @@
             display: inline-block;
         }
 
+        .text-desc {
+            font-size: 0.85rem;
+            color: #555;
+            font-style: italic;
+            max-width: 180px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         /* MODALES FLOTANTES */
         .modal {
             display: none;
@@ -328,7 +369,7 @@
             padding: 25px;
             border-radius: 8px;
             width: 90%;
-            max-width: 520px;
+            max-width: 550px;
             position: relative;
         }
 
@@ -458,9 +499,8 @@
         <div class="card">
             <h2>📚 Inventario General de Libros</h2>
             <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <input type="text" id="searchBook" placeholder="🔍 Buscar por título, autor, ISBN, tipo..." onkeyup="renderBooks()" style="flex: 2; min-width: 200px;">
+                <input type="text" id="searchBook" placeholder="🔍 Buscar por título, autor, ISBN, descripción..." onkeyup="renderBooks()" style="flex: 2; min-width: 200px;">
                 
-                <!-- FILTRO POR TIPO/CATEGORÍA DE LIBRO -->
                 <select id="filterCategoryBook" onchange="renderBooks()" style="flex: 1; min-width: 170px;">
                     <option value="">🏷️ Todos los Tipos / Categorías</option>
                     <option value="Obras Literarias / Novelas">📖 Obras Literarias / Novelas</option>
@@ -492,6 +532,7 @@
                         <th>Título</th>
                         <th>Autor</th>
                         <th>Tipo / Categoría</th>
+                        <th>Descripción</th>
                         <th>ISBN</th>
                         <th>Editorial / Año</th>
                         <th>Disponibles</th>
@@ -560,14 +601,18 @@
 
         <div class="card">
             <h2>Consultar Historial y Préstamos Activos</h2>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; align-items: center;">
                 <input type="text" id="searchPerson" placeholder="🔍 Buscar por usuario o libro..." onkeyup="renderLoans()" style="flex: 2; min-width: 200px;">
                 <select id="filterSedeLoan" onchange="renderLoans()" style="flex: 1; min-width: 180px;">
                     <option value="">🏛️ Todas las Sedes</option>
                     <option value="Sede Conrado (Atenea)">Sede Conrado (Atenea)</option>
                     <option value="Sede Parque (Ana Frank)">Sede Parque (Ana Frank)</option>
                 </select>
+                <!-- BOTONES DE EXPORTACIÓN A EXCEL Y PDF -->
+                <button type="button" class="btn-export-excel" onclick="exportLoansToExcel()">📊 Exportar Excel</button>
+                <button type="button" class="btn-export-pdf" onclick="exportLoansToPDF()">📄 Exportar PDF</button>
             </div>
+
             <table id="loansTable">
                 <thead>
                     <tr>
@@ -626,7 +671,7 @@
         </div>
     </div>
 
-    <!-- SECCIÓN 4: AGREGAR LIBROS (OPCIÓN TIPO / CATEGORÍA AGREGADA JUNTO A AÑO Y DEMÁS CAMPOS) -->
+    <!-- SECCIÓN 4: AGREGAR LIBROS (CON CAMPO DE DESCRIPCIÓN) -->
     <div id="agregar-libros" class="section">
         <div class="card">
             <h2>➕ Agregar Nuevo Libro al Inventario</h2>
@@ -649,7 +694,6 @@
                     <input type="text" id="author" placeholder="Ej: Gabriel García Márquez" required>
                 </div>
 
-                <!-- OPCIÓN PARA DIFERENCIAR CADA TIPO/CATEGORÍA DE LIBRO AL AGREGARLO -->
                 <div class="form-group">
                     <label>Tipo / Categoría de Libro:</label>
                     <select id="category" required>
@@ -670,6 +714,12 @@
                     </select>
                 </div>
 
+                <!-- CAMPO DE DESCRIPCIÓN / SINOPSIS -->
+                <div class="form-group">
+                    <label>Descripción / Sinopsis del Libro:</label>
+                    <textarea id="description" rows="3" placeholder="Breve descripción, sinopsis o notas sobre el estado físico del libro..."></textarea>
+                </div>
+
                 <div class="form-group">
                     <label>ISBN / Código Único:</label>
                     <input type="text" id="isbn" placeholder="Ej: 978-958-04-0000-0" required>
@@ -677,7 +727,7 @@
 
                 <div class="form-group">
                     <label>Editorial:</label>
-                    <input type="text" id="editorial" placeholder="Ej: Editorial Normas / Panamericana" required>
+                    <input type="text" id="editorial" placeholder="Ej: Editorial Norma / Panamericana" required>
                 </div>
 
                 <div class="form-group">
@@ -731,6 +781,11 @@
                     <option value="Cuentos e Infantil">🧸 Cuentos e Infantil / Juvenil</option>
                     <option value="General / Otras">📦 General / Otras</option>
                 </select>
+            </div>
+
+            <div class="form-group">
+                <label>Descripción / Sinopsis:</label>
+                <textarea id="editDescription" rows="3"></textarea>
             </div>
 
             <div class="form-group"><label>ISBN:</label><input type="text" id="editIsbn" required></div>
@@ -855,7 +910,7 @@
         if(tabId === 'calendario') renderDesktopCalendar();
     }
 
-    // 1. INVENTARIO DE LIBROS Y TIPO/CATEGORÍA
+    // 1. INVENTARIO DE LIBROS Y TIPO/CATEGORÍA + DESCRIPCIÓN
     async function addBook(e) {
         e.preventDefault();
         const initialCopies = parseInt(document.getElementById('copies').value) || 1;
@@ -864,7 +919,8 @@
             sede: document.getElementById('sede').value,
             title: document.getElementById('title').value.trim(),
             author: document.getElementById('author').value.trim(),
-            category: document.getElementById('category').value, // REGISTRA EL TIPO DE LIBRO
+            category: document.getElementById('category').value,
+            description: document.getElementById('description').value.trim(), // GUARDA LA DESCRIPCIÓN
             isbn: document.getElementById('isbn').value.trim(),
             editorial: document.getElementById('editorial').value.trim(),
             year: document.getElementById('year').value,
@@ -896,7 +952,8 @@
             const matchesSearch = (b.title || "").toLowerCase().includes(search) || 
                                   (b.author || "").toLowerCase().includes(search) || 
                                   (b.isbn || "").toLowerCase().includes(search) ||
-                                  (b.category || "").toLowerCase().includes(search);
+                                  (b.category || "").toLowerCase().includes(search) ||
+                                  (b.description || "").toLowerCase().includes(search);
             const matchesSede = filterSede === "" || b.sede === filterSede;
             const matchesCategory = filterCategory === "" || b.category === filterCategory;
             return matchesSearch && matchesSede && matchesCategory;
@@ -909,6 +966,7 @@
                 <td><strong>${escapeHtml(b.title)}</strong></td>
                 <td>${escapeHtml(b.author)}</td>
                 <td><span class="badge-category">${escapeHtml(b.category || 'Sin tipo')}</span></td>
+                <td><div class="text-desc" title="${escapeHtml(b.description || '')}">${escapeHtml(b.description || 'Sin descripción')}</div></td>
                 <td>${escapeHtml(b.isbn)}</td>
                 <td>${escapeHtml(b.editorial)} / ${b.year}</td>
                 <td><span class="${b.copies > 0 ? 'badge-available' : 'badge-unavailable'}">${b.copies}</span></td>
@@ -930,6 +988,7 @@
         document.getElementById('editTitle').value = book.title || '';
         document.getElementById('editAuthor').value = book.author || '';
         document.getElementById('editCategory').value = book.category || 'General / Otras';
+        document.getElementById('editDescription').value = book.description || '';
         document.getElementById('editIsbn').value = book.isbn || '';
         document.getElementById('editEditorial').value = book.editorial || '';
         document.getElementById('editYear').value = book.year || '';
@@ -947,6 +1006,7 @@
             title: document.getElementById('editTitle').value.trim(),
             author: document.getElementById('editAuthor').value.trim(),
             category: document.getElementById('editCategory').value,
+            description: document.getElementById('editDescription').value.trim(),
             isbn: document.getElementById('editIsbn').value.trim(),
             editorial: document.getElementById('editEditorial').value.trim(),
             year: document.getElementById('editYear').value,
@@ -1059,6 +1119,104 @@
             `;
             tableBody.appendChild(tr);
         });
+    }
+
+    // FUNCIONES DE EXPORTACIÓN (EXCEL Y PDF)
+    function exportLoansToExcel() {
+        const filterSede = document.getElementById("filterSedeLoan").value;
+        const search = document.getElementById("searchPerson").value.toLowerCase();
+        
+        const filtered = loans.filter(l => {
+            const matchesSearch = (l.personName || "").toLowerCase().includes(search) || 
+                                  (l.bookTitle || "").toLowerCase().includes(search) || 
+                                  (l.group || "").toLowerCase().includes(search);
+            const matchesSede = filterSede === "" || l.sede === filterSede;
+            return matchesSearch && matchesSede;
+        });
+
+        if (filtered.length === 0) {
+            alert("No hay registros en el historial para exportar.");
+            return;
+        }
+
+        const today = new Date().toISOString().split('T')[0];
+
+        const dataToExport = filtered.map(l => ({
+            "Sede": l.sede || 'Sede Conrado',
+            "Usuario / Persona": l.personName || '',
+            "Tipo Usuario": l.role || '',
+            "Grupo / Área": l.group || '',
+            "Libro Prestado": l.bookTitle || '',
+            "Fecha Registro": l.loanDate || '',
+            "Fecha Límite": l.dueDate || '',
+            "Estado": l.dueDate < today ? 'Vencido' : 'Activo'
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Historial_Prestamos");
+        
+        worksheet["!cols"] = [
+            { wch: 22 }, { wch: 25 }, { wch: 14 }, { wch: 16 }, { wch: 30 }, { wch: 15 }, { wch: 15 }, { wch: 12 }
+        ];
+
+        XLSX.writeFile(workbook, `Historial_Prestamos_Biblioteca_Atenea_${today}.xlsx`);
+    }
+
+    function exportLoansToPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const filterSede = document.getElementById("filterSedeLoan").value;
+        const search = document.getElementById("searchPerson").value.toLowerCase();
+        
+        const filtered = loans.filter(l => {
+            const matchesSearch = (l.personName || "").toLowerCase().includes(search) || 
+                                  (l.bookTitle || "").toLowerCase().includes(search) || 
+                                  (l.group || "").toLowerCase().includes(search);
+            const matchesSede = filterSede === "" || l.sede === filterSede;
+            return matchesSearch && matchesSede;
+        });
+
+        if (filtered.length === 0) {
+            alert("No hay registros en el historial para exportar.");
+            return;
+        }
+
+        const today = new Date().toISOString().split('T')[0];
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        doc.setTextColor(43, 27, 23);
+        doc.text("Biblioteca Atenea - I.E. Mariscal Robledo", 14, 18);
+
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "normal");
+        doc.text("Reporte e Historial de Préstamos de Libros", 14, 25);
+        doc.setFontSize(9);
+        doc.text(`Fecha de emisión: ${today} | Filtro Sede: ${filterSede || 'Todas'}`, 14, 31);
+
+        const tableHeaders = [["Sede", "Usuario", "Rol/Grupo", "Libro Prestado", "F. Límite", "Estado"]];
+        const tableData = filtered.map(l => [
+            l.sede || 'Sede Conrado',
+            l.personName || '',
+            `${l.role || ''} (${l.group || ''})`,
+            l.bookTitle || '',
+            l.dueDate || '',
+            l.dueDate < today ? 'VENCIDO' : 'ACTIVO'
+        ]);
+
+        doc.autoTable({
+            startY: 36,
+            head: tableHeaders,
+            body: tableData,
+            headStyles: { fillColor: [61, 35, 20], textColor: [198, 160, 82], fontStyle: 'bold' },
+            alternateRowStyles: { fillColor: [250, 244, 235] },
+            styles: { fontSize: 8, cellPadding: 3 },
+            margin: { top: 36 }
+        });
+
+        doc.save(`Historial_Prestamos_Biblioteca_Atenea_${today}.pdf`);
     }
 
     async function returnLoan(loanId) {
