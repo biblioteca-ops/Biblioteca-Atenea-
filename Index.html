@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Atenea - I.E. Mariscal Robledo</title>
+    
+    <!-- Firebase SDKs (v9 compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <!-- Librerías externas para exportación a PDF y Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <style>
+        :root {
+            --pergamino-bg: #F4EBE1;
+            --pergamino-card: #FAF4EB;
+            --tinta-sepia: #2B1B17;
+            --dorado-bronce: #C6A052;
+            --dorado-oscuro: #9E7B32;
+            --danger-carmesi: #8B0000;
+            --success-laurel: #2E5A27;
+            --borde-pergamino: #D8C3A5;
+        }
+
+        body {
+            font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif;
+            margin: 0;
+            background-color: var(--pergamino-bg);
+            color: var(--tinta-sepia);
+            background-image: 
+                radial-gradient(rgba(198, 160, 82, 0.08) 1px, transparent 0),
+                linear-gradient(to right, rgba(166, 110, 40, 0.03) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #1A100C 0%, #3D2314 100%);
+            color: var(--dorado-bronce);
+            padding: 22px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            border-bottom: 5px solid var(--dorado-bronce);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+        }
+
+        .atenea-avatar {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            border: 3px solid var(--dorado-bronce);
+            overflow: hidden;
+            box-shadow: 0 0 12px rgba(198, 160, 82, 0.5);
+            background-color: #000;
+            flex-shrink: 0;
+        }
+
+        .atenea-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .header-titles h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .header-titles p {
+            margin: 5px 0 0;
+            color: #E8D5B7;
+            font-style: italic;
+            font-size: 1.05rem;
+        }
+
+        /* NAVEGACIÓN */
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #24140B;
+            border-bottom: 3px solid var(--dorado-bronce);
+            flex-wrap: wrap;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: #D8C3A5;
+            padding: 16px 24px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            font-family: 'Palatino Linotype', serif;
+            cursor: pointer;
+            transition: 0.3s;
+            border-bottom: 4px solid transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        nav button:hover, nav button.active {
+            color: var(--dorado-bronce);
+            border-bottom: 4px solid var(--dorado-bronce);
+            background-color: rgba(198, 160, 82, 0.15);
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .section { display: none; }
+        .section.active { display: block; }
+
+        .card {
+            background: var(--pergamino-card);
+            padding: 28px;
+            border-radius: 8px;
+            box-shadow: inset 0 0 15px rgba(120, 80, 20, 0.08), 0 5px 18px rgba(0,0,0,0.1);
+            border: 2px solid var(--borde-pergamino);
+            border-top: 5px solid var(--dorado-bronce);
+            margin-bottom: 25px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #3D2314;
+            border-bottom: 2px dashed var(--borde-pergamino);
+            padding-bottom: 12px;
+            font-size: 1.6rem;
+            letter-spacing: 1px;
+        }
+
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 6px; font-weight: bold; color: #3D2314; }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid var(--borde-pergamino);
+            border-radius: 4px;
+            box-sizing: border-box
